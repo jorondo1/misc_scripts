@@ -1,13 +1,15 @@
-###############################################################################
-# This is a workaround if the DADA2 script busts your R memory when using #####
-# addSpecies() or assignSpecies(). The function loops over subsets of data ####
-# using the output from assignTaxonomy as an input. There is also below a #####
-# code for an alternative taxonomy assignment approach, referenced below. #####
-###############################################################################
-### Author : Jonathan Rondeau-Leclaire ########################################
-###############################################################################
+############################################################################
+# This is a workaround if the DADA2 script busts your R memory when using ##
+# addSpecies() or assignSpecies(). The function loops over subsets of data #
+# using the output from assignTaxonomy as an input. There is also below a ##
+# code for an alternative taxonomy assignment approach, referenced below. ##
+############################################################################
+### Author : Jonathan Rondeau-Leclaire #####################################
+############################################################################
 
 library(dada2)
+# Assuming you have reached the assignTaxonomy step in the DADA2 workflow.
+# Loading an output from bimera removal (see https://benjjneb.github.io/dada2/tutorial.html)
 seqtab.nochim <- readRDS("~/Downloads/seqtab.nochim.rds")
 
 # Function to addSpecies in chunks
@@ -46,7 +48,7 @@ library(DECIPHER)
 # On M1/M2 chips: https://github.com/Rdatatable/data.table/issues/5419#issuecomment-1906490594
 # On intel: not tested yet.
 
-# Following code mostly copied from DADA2 tutorial : https://benjjneb.github.io/dada2/tutorial.html
+# Following code mostly copied from DADA2 tutorial.
 # Load the training set, available here http://www2.decipher.codes/Downloads.html
 load("~/Downloads/SILVA_SSU_r138_2019.RData") 
 ids <- IdTaxa(DNAStringSet(getSequences(seqtab.nochim)), # Create a DNAStringSet from the ASVs
