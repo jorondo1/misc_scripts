@@ -20,7 +20,7 @@ addSpecies_custom <- function(tax.mx, chunkSize) {
     results[[length(results)+1]] <- 
       addSpecies(
         taxtab = tax.mx[i:min(i+chunkSize-1, nRows),], # subset 
-        refFasta = "~/Downloads/silva_species_assignment_v138.1.fa") 
+        refFasta = "~/Downloads/silva_species_assignment_v138.1.fa.gz") 
   }; do.call(rbind, results) # collapse in a single df
 }
 
@@ -28,7 +28,7 @@ addSpecies_custom <- function(tax.mx, chunkSize) {
 ### USED WITH THE DEFAULT DADA2 APPROACH #####
 #############################################
 
-taxa <- assignTaxonomy(readRDS("~/Downloads/seqtab.nochim.rds"),
+taxa <- assignTaxonomy(seqtab.nochim,
                        "~/Downloads/silva_nr99_v138.1_train_set.fa.gz", 
                        multithread=TRUE)
 
