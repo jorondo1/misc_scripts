@@ -88,20 +88,20 @@ eval_cont() {
 # columns of interest
 
 local SM_abund=$(realpath "${1}")
-q_index=$(awk -v RS=',' '/query_name/{print NR; exit}' "${1}"/*_gather.csv)
-c_index=$(awk -v RS=',' '/f_unique_weighted/{print NR; exit}' "${1}"/*_gather.csv)
+q_index=$(awk -v RS=',' '/query_name/{print NR; exit}' ${SM_DIR}/*_gather.csv)
+c_index=$(awk -v RS=',' '/f_unique_weighted/{print NR; exit}' ${SM_DIR}/*_gather.csv)
 
 # Compile containment by run
-gather_files=($(find "${1}" -maxdepth 1 -type f -name '*_gather.csv'))
-:> "${1}"/cntm_sum.txt
+gather_files=($(find ${SM_DIR} -maxdepth 1 -type f -name '*_gather.csv'))
+:> ${SM_DIR}/cntm_sum.txt
 for file in "${gather_files[@]}"; do
         RUN_CNTM=$(cut -d',' -f $c_index $file | tail -n +2 | awk '{sum+=$1;} END{print sum;}')
         RUN_ID=$(cut -d',' -f $q_index $file | head | tail -n 1)
         echo $RUN_ID
         DB_ID=$(echo $file | sed "s/.*${RUN_ID}_//" | sed 's/_gather\.csv//')
-        echo -e "${RUN_ID}\t${DB_ID}\t${RUN_CNTM}" >> "${1}"/cntm_sum.txt
+        echo -e "${RUN_ID}\t${DB_ID}\t${RUN_CNTM}" >> ${SM_DIR}/cntm_sum.txt
 done
-sort -o SM_abund/cntm_sum.txt -k1,1 -k2,2 SM_abund/cntm_sum.txt  
+sort -o ${SM_DIR}/cntm_sum.txt -k1,1 -k2,2 ${SM_DIR}/cntm_sum.txt  
 
 # Compile overall containment by db type
 echo -e "ref_db\tcntm_avg\tcntm_sd"
