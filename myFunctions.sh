@@ -1,6 +1,4 @@
-#!/bin/bash
-
-MAG_DIR="$PARENT_DIR/MAG_analysis"
+ MAG_DIR="$PARENT_DIR/MAG_analysis"
 DREP="$MAG_DIR/drep_genomes"
 
 assembly_stats() {
@@ -78,7 +76,7 @@ cat novel_quality_scores.txt | awk '$4 > 50.00' | \
 
 # GTDB taxonomy has commas in it, this messes up the column recognition we need in eval_cont(). Fixing it:
 fix_gtdb() {
-export gather=$PWD/SM_abund
+export gather=$PWD/"${1}"
 for file in $gather/*.csv; do
         awk -F'"' -v OFS='"' '{ for (i=2; i<=NF; i+=2) gsub(",", "", $i) } 1' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
 done
@@ -87,7 +85,7 @@ done
 eval_cont() {
 # columns of interest
 
-local SM_abund=$(realpath "${1}")
+local SM_DIR=$(realpath "${1}")
 q_index=$(awk -v RS=',' '/query_name/{print NR; exit}' ${SM_DIR}/*_gather.csv)
 c_index=$(awk -v RS=',' '/f_unique_weighted/{print NR; exit}' ${SM_DIR}/*_gather.csv)
 
@@ -98,14 +96,17 @@ for file in "${gather_files[@]}"; do
         RUN_CNTM=$(cut -d',' -f $c_index $file | tail -n +2 | awk '{sum+=$1;} END{print sum;}')
         RUN_ID=$(cut -d',' -f $q_index $file | head | tail -n 1)
         echo $RUN_ID
-        DB_ID=$(echo $file | sed "s/.*${RUN_ID}_//" | sed 's/_gather\.csv//')
+        DB_ID=$(echo $file | sed "s|.*${RUN_ID}_||" | sed 's/_gather\.csv//')
         echo -e "${RUN_ID}\t${DB_ID}\t${RUN_CNTM}" >> ${SM_DIR}/cntm_sum.txt
 done
 sort -o ${SM_DIR}/cntm_sum.txt -k1,1 -k2,2 ${SM_DIR}/cntm_sum.txt  
 
+# List dbs 
+dbs=($(awk '{if (!seen[$2]++) print $2}' ${SM_DIR}/cntm_sum.txt))
+
 # Compile overall containment by db type
 echo -e "ref_db\tcntm_avg\tcntm_sd"
-for i in custom gtdb genbank genbank_default; do
+for i in "${dbs[@]}"; do
         CNTM_AVG=$(grep -w "${i}" ""${1}"/cntm_sum.txt" | cut -f3 - | awk '{x+=$0}END{print x/NR}') # compute average run containment
         CNTM_SD=$(grep -w "${i}" ""${1}"/cntm_sum.txt" | cut -f3 - | awk '{x+=$0;y+=$0^2}END{print sqrt(y/NR-(x/NR)^2)}') # and standard deviation
         echo -e "$i\t${CNTM_AVG}\t${CNTM_SD}"
