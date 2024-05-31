@@ -1,3 +1,5 @@
+# Paralellize phyloseq's rarefaction function
+
 rarefy_even_depth2 <- function (
     physeq, sample.size = min(sample_sums(physeq)), rngseed = FALSE, 
     replace = TRUE, trimOTUs = TRUE, verbose = TRUE
