@@ -3,7 +3,7 @@
 rarefy_even_depth2 <- function (
     physeq, sample.size = min(sample_sums(physeq)), rngseed = FALSE, 
     replace = TRUE, trimOTUs = TRUE, verbose = TRUE
-    ) 
+) 
 { 
   if (!requireNamespace("doParallel", quietly = TRUE)) {
     stop("The package 'doParallel' is required but not installed.")

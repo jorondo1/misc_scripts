@@ -41,3 +41,5 @@ estimate_diversity <- function(ps, index = 'Shannon') {
   }
   div
 }
+
+source(url('https://raw.githubusercontent.com/jorondo1/misc_scripts/main/rarefy_even_depth2.R'))
