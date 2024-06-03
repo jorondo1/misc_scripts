@@ -1,10 +1,3 @@
-if [[ -z ${1} ]] || [[ -z ${2} ]]; then
-	echo 'Missing positional arguments!'
-	echo '1: directory containing gather results'
-	echo '2: output directory'
-	Exit 1
-fi
-
 MAG_DIR="$PARENT_DIR/MAG_analysis"
 DREP="$MAG_DIR/drep_genomes"
 
@@ -90,6 +83,14 @@ done
 }
 
 eval_cont() {
+	
+if [[ -z ${1} ]] || [[ -z ${2} ]]; then
+	echo 'Missing positional arguments!'
+	echo '1: directory containing gather results'
+	echo '2: output directory'
+	Exit 1
+fi
+
 # columns of interest
 
 local SM_DIR=$(realpath "${1}")
