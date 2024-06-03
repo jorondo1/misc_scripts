@@ -1,7 +1,7 @@
-MAG_DIR="$PARENT_DIR/MAG_analysis"
-DREP="$MAG_DIR/drep_genomes"
 
 assembly_stats() {
+MAG_DIR="$PARENT_DIR/MAG_analysis"
+DREP="$MAG_DIR/drep_genomes"
 find $DREP/dereplicated_genomes/ -type f -name '*.fa' | \
 xargs -n1 basename | \
 grep -wf - $DREP/data/checkM/checkM_outdir/results.tsv > $DREP/checkm_final_set.tsv
@@ -46,6 +46,8 @@ cat_samples() {
 }
 
 novel_genomes() {
+MAG_DIR="$PARENT_DIR/MAG_analysis"
+DREP="$MAG_DIR/drep_genomes"
 
 export GTDB_TSV=$MAG_DIR/gtdbtk_out/classify/gtdbtk.bac120.summary.tsv
 
