@@ -86,11 +86,10 @@ done
 
 eval_cont() {
 	
-if [[ -z ${1} ]] || [[ -z ${2} ]]; then
-	echo 'Missing positional arguments!'
+if [[ -z ${1} ]]; then
+	echo 'Missing positional argument!'
 	echo '1: directory containing gather results'
-	echo '2: output directory'
-	Exit 1
+	exit 1
 fi
 
 # columns of interest
@@ -101,24 +100,24 @@ c_index=$(awk -v RS=',' '/f_unique_weighted/{print NR; exit}' ${SM_DIR}/*_gather
 
 # Compile containment by run
 gather_files=($(find ${SM_DIR} -maxdepth 1 -type f -name '*_gather.csv'))
-:> ${2}/cntm_sum.txt
+:> ${1}/cntm_sum.txt
 for file in "${gather_files[@]}"; do
         RUN_CNTM=$(cut -d',' -f $c_index $file | tail -n +2 | awk '{sum+=$1;} END{print sum;}')
         RUN_ID=$(cut -d',' -f $q_index $file | head | tail -n 1)
         echo $RUN_ID
         DB_ID=$(echo $file | sed "s|.*${RUN_ID}_||" | sed 's/_gather\.csv//')
-        echo -e "${RUN_ID}\t${DB_ID}\t${RUN_CNTM}" >> ${2}/cntm_sum.txt
+        echo -e "${RUN_ID}\t${DB_ID}\t${RUN_CNTM}" >> ${1}/cntm_sum.txt
 done
-sort -o ${2}/cntm_sum.txt -k1,1 -k2,2 ${2}/cntm_sum.txt  
+sort -o ${1}/cntm_sum.txt -k1,1 -k2,2 ${1}/cntm_sum.txt  
 
 # List dbs 
-dbs=($(awk '{if (!seen[$2]++) print $2}' ${2}/cntm_sum.txt))
+dbs=($(awk '{if (!seen[$2]++) print $2}' ${1}/cntm_sum.txt))
 
 # Compile overall containment by db type
 echo -e "ref_db\tcntm_avg\tcntm_sd"
 for i in "${dbs[@]}"; do
-        CNTM_AVG=$(grep -w "${i}" ""${1}"/cntm_sum.txt" | cut -f3 - | awk '{x+=$0}END{print x/NR}') # compute average run containment
-        CNTM_SD=$(grep -w "${i}" ""${1}"/cntm_sum.txt" | cut -f3 - | awk '{x+=$0;y+=$0^2}END{print sqrt(y/NR-(x/NR)^2)}') # and standard deviation
+        CNTM_AVG=$(grep -w "${i}" "${1}/cntm_sum.txt" | cut -f3 - | awk '{x+=$0}END{print x/NR}') # compute average run containment
+        CNTM_SD=$(grep -w "${i}" "${1}/cntm_sum.txt" | cut -f3 - | awk '{x+=$0;y+=$0^2}END{print sqrt(y/NR-(x/NR)^2)}') # and standard deviation
         echo -e "$i\t${CNTM_AVG}\t${CNTM_SD}"
 done
 }
