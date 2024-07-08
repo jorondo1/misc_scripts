@@ -39,5 +39,8 @@ estimate_diversity <- function(ps, index = 'Shannon') {
   if(index == 'Simpson') {
     div <- 1 - apply((x * x), 1, sum, na.rm = TRUE) 
   }
-  div
+  if(index == 'Richness') {
+    div <- apply(x, 1, function(x) sum(x != 0))
+  }
+  return(div)
 }
