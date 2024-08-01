@@ -16,6 +16,28 @@ parse_SM <- function(gather_files) {
     round(digits=0)
 }
 
+### Parse MetaPhlAn output
+read_filename <- function(filepath) {
+  readLines(filepath) %>% 
+    grep("^[^#]", ., value = TRUE) %>% # discard header lines
+    textConnection %>% # create connection to chr vector, enables file-reading fun for in-memory strings
+    read.table(sep = '\t', header = FALSE, col.names=c('Taxonomy', 'NCBI','Abundance', 'Void')) %>%
+    mutate(sample = basename(filepath) %>% str_remove('_profile.txt'))
+}
+
+parse_MPA <- function(MPA_files){
+  Sys.glob(MPA_files) %>% 
+    map(read_filename) %>% #compact %>% 
+    list_rbind %>% # Keep only lines with species, remove duplicates at strain level
+    dplyr::filter(str_detect(Taxonomy, "s__") & !str_detect(Taxonomy,"t__")) %>% 
+    dplyr::select(sample, Taxonomy, Abundance) %>% 
+    mutate(Abundance = as.double(Abundance)) %>% 
+    pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
+    mutate(Taxonomy = str_remove_all(Taxonomy, "\\w__\\|?")) %>%
+    separate(Taxonomy, into = c('Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'), 
+             sep = "\\|")
+}
+
 # Esitmate diversity (Shannon, Simpson, Tail)
 estimate_diversity <- function(ps, index = 'Shannon') {
   x <- ps@otu_table %>% as("matrix")
