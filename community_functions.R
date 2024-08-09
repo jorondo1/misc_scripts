@@ -7,7 +7,7 @@ parse_SM <- function(gather_files) {
       genome = str_replace_all(name, c(" .*" = "", ".fa.sig" = "")), # remove _1 from MAG identifiers
       run = str_replace(query_name, "_clean", ""), 
       .keep="unused") %>% 
-    select(run, uniqueK, genome) %>% 
+    dplyr::select(run, uniqueK, genome) %>% 
     pivot_wider(names_from = run,
                 values_from = uniqueK) %>% 
     replace(is.na(.), 0) %>% 
@@ -17,25 +17,55 @@ parse_SM <- function(gather_files) {
 }
 
 ### Parse MetaPhlAn output
-read_filename <- function(filepath) {
+default_colnames <- c('Taxonomy', 'Abundance')
+read_filename <- function(filepath, column_names = default_colnames) {
   readLines(filepath) %>% 
     grep("^[^#]", ., value = TRUE) %>% # discard header lines
     textConnection %>% # create connection to chr vector, enables file-reading fun for in-memory strings
-    read.table(sep = '\t', header = FALSE, col.names=c('Taxonomy', 'NCBI','Abundance', 'Void')) %>%
-    mutate(sample = basename(filepath) %>% str_remove('_profile.txt'))
+    read.table(sep = '\t', header = FALSE, col.names=column_names, 
+               quote = "" # otherwise EOF error
+               ) %>%
+    mutate(sample = basename(filepath) %>% str_replace('_.*', ""))
 }
 
-parse_MPA <- function(MPA_files){
+parse_MPA <- function(MPA_files, # path with wildcard to point to all files
+                      column_names = default_colnames){ 
   Sys.glob(MPA_files) %>% 
-    map(read_filename) %>% #compact %>% 
+    map(read_filename, column_names) %>% #compact %>% 
     list_rbind %>% # Keep only lines with species, remove duplicates at strain level
     dplyr::filter(str_detect(Taxonomy, "s__") & !str_detect(Taxonomy,"t__")) %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     mutate(Abundance = as.double(Abundance)) %>% 
     pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
-    mutate(Taxonomy = str_remove_all(Taxonomy, "\\w__\\|?")) %>%
-    separate(Taxonomy, into = c('Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'), 
-             sep = "\\|")
+    mutate(Kingdom = str_extract(Taxonomy, "k__[^|]+") %>% str_remove("k__"),
+           Phylum = str_extract(Taxonomy, "p__[^|]+") %>% str_remove("p__"),
+           Class = str_extract(Taxonomy, "c__[^|]+") %>% str_remove("c__"),
+           Order = str_extract(Taxonomy, "o__[^|]+") %>% str_remove("o__"),
+           Family = str_extract(Taxonomy, "f__[^|]+") %>% str_remove("f__"),
+           Genus = str_extract(Taxonomy, "g__[^|]+") %>% str_remove("g__"),
+           Species = str_extract(Taxonomy, "s__[^|]+") %>% str_remove("s__")) %>%
+    select(-Taxonomy)
+  }
+
+### Build phyloseq object from MPA output
+make_phylo_MPA <- function(abunTable, sampleData, 
+                           # vector with a name for every raw data column, 
+                           # MUST include at least "Taxonomy" and "Abundance" :                          
+                           raw_data_colnames = default_colnames) {
+  
+  # Extract abundance table with Species as identifier
+  MPA_abund <- abunTable %>% dplyr::select(where(is.double), Species) %>% 
+    column_to_rownames('Species') 
+  
+  # Extract taxonomy
+  MPA_tax <- abunTable %>% dplyr::select(where(is.character)) %>% 
+    mutate(Species2 = Species) %>% column_to_rownames('Species2') %>% as.matrix
+  
+  # Build phyloseq
+  phyloseq(otu_table(MPA_abund, taxa_are_rows = TRUE),
+           sample_data(sampleData),
+           tax_table(MPA_tax)
+  )
 }
 
 # Esitmate diversity (Shannon, Simpson, Tail)
