@@ -72,29 +72,22 @@ make_phylo_MPA <- function(abunTable, sampleData,
 }
 
 # compute Hill numbers
-estimate_Hill <- function(ps, H) {
+estimate_Hill <- function(ps, q) {
   x <- ps@otu_table %>% as("matrix")
   if (taxa_are_rows(ps)) { 
     x <- t(x) 
   }
-  total <- apply(x, 1, sum)
+  total <- rowSums(x)
   x <- sweep(x, 1, total, "/")
   
-  if(H == 0) {
-    div <- apply(x, 1, function(x) sum(x != 0))
+  if (q == 0) {  # Species richness
+    div <- rowSums(x > 0)
+  } else if (q == 1) { # Shannon diversity (exponential of Shannon entropy)
+    div <- exp(-rowSums(x * log(x, base = exp(1)), na.rm = TRUE))
+  } else {  # Hill number formula for q ≠ 0 and q ≠ 1
+    div <- rowSums(x^q)^(1 / (1 - q))
   }
-  if(H == 1) {
-    x <- -x * log(x, exp(1))
-    shannon <- apply(x, 1, sum, na.rm = TRUE)
-    div <- exp(shannon)
-  }
-  if(H == 2) {
-    simpson <- 1 - apply((x * x), 1, sum, na.rm = TRUE) 
-    div <- 1 / simpson
-  }
-  else {
-    stop("Unsupported value of q. Choose q = 0, 1, or 2.")
-  }
+
   return(div)
 }
 
