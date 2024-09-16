@@ -36,6 +36,9 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
     dplyr::filter(str_detect(Taxonomy, "s__") & !str_detect(Taxonomy,"t__")) %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     mutate(Abundance = as.double(Abundance)) %>% 
+    group_by(Taxonomy, sample) %>% 
+    summarise(Abundance = sum(Abundance)) %>% # sum strains into species if applicable
+    ungroup %>% 
     pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
     mutate(Kingdom = str_extract(Taxonomy, "k__[^|]+") %>% str_remove("k__"),
            Phylum = str_extract(Taxonomy, "p__[^|]+") %>% str_remove("p__"),
@@ -44,7 +47,7 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
            Family = str_extract(Taxonomy, "f__[^|]+") %>% str_remove("f__"),
            Genus = str_extract(Taxonomy, "g__[^|]+") %>% str_remove("g__"),
            Species = str_extract(Taxonomy, "s__[^|]+") %>% str_remove("s__")) %>%
-    select(-Taxonomy)
+    dplyr::select(-Taxonomy)
   }
 
 ### Build phyloseq object from MPA output
@@ -66,6 +69,33 @@ make_phylo_MPA <- function(abunTable, sampleData,
            sample_data(sampleData),
            tax_table(MPA_tax)
   )
+}
+
+# compute Hill numbers
+estimate_Hill <- function(ps, H) {
+  x <- ps@otu_table %>% as("matrix")
+  if (taxa_are_rows(ps)) { 
+    x <- t(x) 
+  }
+  total <- apply(x, 1, sum)
+  x <- sweep(x, 1, total, "/")
+  
+  if(H == 0) {
+    div <- apply(x, 1, function(x) sum(x != 0))
+  }
+  if(H == 1) {
+    x <- -x * log(x, exp(1))
+    shannon <- apply(x, 1, sum, na.rm = TRUE)
+    div <- exp(shannon)
+  }
+  if(H == 2) {
+    simpson <- 1 - apply((x * x), 1, sum, na.rm = TRUE) 
+    div <- 1 / simpson
+  }
+  else {
+    stop("Unsupported value of q. Choose q = 0, 1, or 2.")
+  }
+  return(div)
 }
 
 # Esitmate diversity (Shannon, Simpson, Tail)
