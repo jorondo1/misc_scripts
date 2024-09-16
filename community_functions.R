@@ -87,7 +87,6 @@ estimate_Hill <- function(ps, q) {
   } else {  # Hill number formula for q ≠ 0 and q ≠ 1
     div <- rowSums(x^q)^(1 / (1 - q))
   }
-
   return(div)
 }
 
