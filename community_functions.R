@@ -1,4 +1,6 @@
-### Parse Sourmash output
+############################
+### Parse Sourmash output ###
+##############################
 parse_SM <- function(gather_files) {
   Sys.glob(gather_files) %>% 
     map_dfr(read_csv, col_types="ddddddddcccddddcccd") %>%
@@ -12,11 +14,35 @@ parse_SM <- function(gather_files) {
                 values_from = uniqueK) %>% 
     replace(is.na(.), 0) %>% 
     arrange(genome) %>% 
-    column_to_rownames("genome") %>% 
-    round(digits=0)
+    mutate(across(where(is.numeric), \(x) round(x, digits=0)))
 }
 
-### Parse MetaPhlAn output
+# To parse the gtdb taxonomy 
+parse_GTDB_lineages <- function(file, colnames) {
+  read_delim(file, show_col_types = FALSE,
+             col_names = c('genome','rep','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')) %>% 
+#    mutate(genome = str_remove(genome, "^[^_]*_")) %>% 
+    mutate_all(~str_replace(., "^[A-Za-z]_+", ""))
+}
+
+parse_genbank_lineages <- function(file) {
+  read_delim(file, show_col_types = FALSE, 
+             col_names = c('ident','taxid','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species','Strain')) %>% 
+    dplyr::select(-taxid) %>% 
+    mutate(genome = ident, .keep = 'unused')
+  }
+
+species_glom <- function(abundTable) {
+  abundTable %<>% 
+    group_by(Kingdom, Phylum, Class, Order, Family, Genus, Species) %>% #keep those
+    summarise(across(where(is.numeric), sum, na.rm = TRUE),  # Sum the sample abundance columns
+              .groups = "drop")     
+}
+
+
+##############################
+### Parse MetaPhlAn output ####
+################################
 default_colnames <- c('Taxonomy', 'Abundance')
 read_filename <- function(filepath, column_names = default_colnames) {
   readLines(filepath) %>% 
@@ -37,8 +63,7 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     mutate(Abundance = as.double(Abundance)) %>% 
     group_by(Taxonomy, sample) %>% 
-    summarise(Abundance = sum(Abundance)) %>% # sum strains into species if applicable
-    ungroup %>% 
+    summarise(Abundance = sum(Abundance), .groups='drop') %>% # sum strains into species if applicable
     pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
     mutate(Kingdom = str_extract(Taxonomy, "k__[^|]+") %>% str_remove("k__"),
            Phylum = str_extract(Taxonomy, "p__[^|]+") %>% str_remove("p__"),
@@ -51,23 +76,20 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
   }
 
 ### Build phyloseq object from MPA output
-make_phylo_MPA <- function(abunTable, sampleData, 
-                           # vector with a name for every raw data column, 
-                           # MUST include at least "Taxonomy" and "Abundance" :                          
-                           raw_data_colnames = default_colnames) {
+assemble_phyloseq <- function(abunTable, sampleData) {
   
   # Extract abundance table with Species as identifier
-  MPA_abund <- abunTable %>% dplyr::select(where(is.double), Species) %>% 
+  abund <- abunTable %>% dplyr::select(where(is.double), Species) %>% 
     column_to_rownames('Species') 
   
   # Extract taxonomy
-  MPA_tax <- abunTable %>% dplyr::select(where(is.character)) %>% 
+  tax <- abunTable %>% dplyr::select(where(is.character)) %>% 
     mutate(Species2 = Species) %>% column_to_rownames('Species2') %>% as.matrix
   
   # Build phyloseq
-  phyloseq(otu_table(MPA_abund, taxa_are_rows = TRUE),
+  phyloseq(otu_table(abund, taxa_are_rows = TRUE),
            sample_data(sampleData),
-           tax_table(MPA_tax)
+           tax_table(tax)
   )
 }
 
