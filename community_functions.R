@@ -1,20 +1,34 @@
 ############################
 ### Parse Sourmash output ###
 ##############################
+
+# handle cases of older sourmash versions where the variable was "name" 
+# instead of "match_name" (introduced through the branchwater approach)
+genome_col_name_version <- function(df) {
+  if ("name" %in% names(df)) {
+    return(str_replace_all(df$name, c(" .*" = "", ".fa.sig" = ""))) # remove _1 from MAG identifiers
+  } else {
+    return(str_replace_all(df$match_name, c(" .*" = "", ".fa.sig" = "")))
+  }
+}
 parse_SM <- function(gather_files) {
-  Sys.glob(gather_files) %>% 
-    map_dfr(read_csv, col_types="ddddddddcccddddcccd") %>%
+  gather_data <- Sys.glob(gather_files) %>% 
+    map_dfr(read_csv, col_types='ddddddddcccddddcccddcddcddddddd') %>%
     mutate(
       uniqueK = (unique_intersect_bp/scaled)*average_abund,
-      genome = str_replace_all(name, c(" .*" = "", ".fa.sig" = "")), # remove _1 from MAG identifiers
+      genome = genome_col_name_version(pick(everything())), 
       run = str_replace(query_name, "_clean", ""), 
-      .keep="unused") %>% 
-    dplyr::select(run, uniqueK, genome) %>% 
-    pivot_wider(names_from = run,
-                values_from = uniqueK) %>% 
-    replace(is.na(.), 0) %>% 
-    arrange(genome) %>% 
-    mutate(across(where(is.numeric), \(x) round(x, digits=0)))
+      .keep = "unused"
+    )
+    
+    # Process output and return
+    gather_data %>% 
+      dplyr::select(run, uniqueK, genome) %>% 
+      pivot_wider(names_from = run,
+                  values_from = uniqueK) %>% 
+      replace(is.na(.), 0) %>% 
+      arrange(genome) %>% 
+      mutate(across(where(is.numeric), \(x) round(x, digits=0)))
 }
 
 # To parse the gtdb taxonomy 
@@ -38,7 +52,6 @@ species_glom <- function(abundTable) {
     summarise(across(where(is.numeric), sum, na.rm = TRUE),  # Sum the sample abundance columns
               .groups = "drop")     
 }
-
 
 ##############################
 ### Parse MetaPhlAn output ####
@@ -72,5 +85,46 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
            Family = str_extract(Taxonomy, "f__[^|]+") %>% str_remove("f__"),
            Genus = str_extract(Taxonomy, "g__[^|]+") %>% str_remove("g__"),
            Species = str_extract(Taxonomy, "s__[^|]+") %>% str_remove("s__")) %>%
-    dplyr::select(-Taxonomy)
+    dplyr::select(-Taxonomy) 
   }
+
+###################################
+######## Distance-based analyses ###
+#####################################
+
+# Variance-stabilizing transformation
+vst_ps_to_mx <- function(ps) {
+  phyloseq_to_deseq2(
+    ps, ~ 1) %>% # DESeq2 object
+    estimateSizeFactors(., geoMeans = apply(
+      counts(.), 1, function(x) exp(sum(log(x[x>0]))/length(x)))) %>% 
+    DESeq2::varianceStabilizingTransformation(blind=T) %>% # VST
+    SummarizedExperiment::assay(.) %>% t %>% 
+    { .[. < 0] <- 0; . } # replace negatives by zeros
+}
+
+# PCOA
+# Return a list of 3 elements :
+# 1. the phyloseq sample_data with 2 first PCo added
+# 2. the eigenvalues
+# 3. the distance/dissimilarity matrix
+compute_pcoa <- function(ps, dist) {
+  vst <- ifelse(dist == 'bray', TRUE, FALSE) 
+  dist.mx <- ps %>%
+    { 
+      counts <- if (vst) vst_ps_to_mx(.) else otu_table(.)
+      if (taxa_are_rows(ps) & !vst) t(counts) else counts
+      } %>% 
+    vegan::vegdist(method = dist)
+  
+  PCoA <- capscale(dist.mx~1, distance = dist)
+  eig <- round(PCoA$CA$eig[1:3]/sum(PCoA$CA$eig),2)
+  message(paste("First 3 PCo :",eig[1], ',', eig[2], ',', eig[3]))
+  # create output list
+  out <- data.frame(sample_data(ps))
+  out$PCo1 <- scores(PCoA)$sites[,1]
+  out$PCo2 <- scores(PCoA)$sites[,2]
+  
+  list(metadata = out, eig = PCoA$CA$eig, dist.mx = dist.mx)
+}
+
