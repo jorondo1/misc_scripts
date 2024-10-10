@@ -2,7 +2,7 @@
 
 rarefy_even_depth2 <- function (
     physeq, sample.size = min(sample_sums(physeq)), rngseed = FALSE, 
-    replace = TRUE, trimOTUs = TRUE, verbose = TRUE
+    replace = TRUE, trimOTUs = TRUE, verbose = FALSE
 ) 
 { 
   if (!requireNamespace("doParallel", quietly = TRUE)) {
@@ -15,7 +15,7 @@ rarefy_even_depth2 <- function (
     if (verbose) {
       message("`set.seed(", rngseed, ")` was used to initialize repeatable random subsampling.")
       message("Please record this for your records so others can reproduce.")
-      message("Try `set.seed(", rngseed, "); .Random.seed` for the full vector", 
+      message("Try `set.seed(", rngseed, "); .Random.seed` for the full vector",
               sep = "")
       message("...")
     }
@@ -50,6 +50,7 @@ rarefy_even_depth2 <- function (
   if (!taxa_are_rows(newsub)) {
     newsub <- t(newsub)
   }
+  
   # Parallelization
   applyByCol <- function(df, FUN, ...) {
     res = foreach(i=1:ncol(df)) %dopar%
@@ -60,7 +61,7 @@ rarefy_even_depth2 <- function (
     return(res)
   }
   # apply through each sample, and replace
-  threads = detectCores()
+  threads = detectCores()-1
   registerDoParallel(cores=threads)
   newotu <- applyByCol(otu_table(newsub), 
                        phyloseq:::rarefaction_subsample,
