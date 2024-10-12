@@ -2,7 +2,7 @@
 # agglomerated taxrank, to avoid e.g. keeping an arbitrary ASV for
 # a genus that encompasses multiple ASVs post agglomeration. 
 
-function (physeq, taxrank = rank_names(physeq)[1], NArm = TRUE, 
+tax_glom2 <- function (physeq, taxrank = rank_names(physeq)[1], NArm = TRUE, 
           bad_empty = c(NA, "", " ", "\t")) 
 {
   if (is.null(access(physeq, "tax_table"))) {
