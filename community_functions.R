@@ -62,16 +62,17 @@ read_filename <- function(filepath, column_names = default_colnames) {
     grep("^[^#]", ., value = TRUE) %>% # discard header lines
     textConnection %>% # create connection to chr vector, enables file-reading fun for in-memory strings
     read.table(sep = '\t', header = FALSE, col.names=column_names, 
-               quote = "" # otherwise EOF error
+               quote = "", colClasses = 'character' # otherwise EOF error
                ) %>%
-    mutate(sample = basename(filepath) %>% str_replace('_.*', ""))
+    mutate(sample = basename(filepath) %>% str_replace('_.*', ""),
+           Abundance = as.numeric(Abundance))
 }
 
 parse_MPA <- function(MPA_files, # path with wildcard to point to all files
                       column_names = default_colnames){ 
   Sys.glob(MPA_files) %>% 
     map(read_filename, column_names) %>% #compact %>% 
-    list_rbind %>% # Keep only lines with species, remove duplicates at strain level
+    list_rbind %>% tibble %>% # Keep only lines with species, remove duplicates at strain level
     dplyr::filter(str_detect(Taxonomy, "s__") & !str_detect(Taxonomy,"t__")) %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     mutate(Abundance = as.double(Abundance)) %>% 
