@@ -1,3 +1,4 @@
+# from https://joey711.github.io/phyloseq-extensions/edgeR.html
 phyloseq_to_edgeR = function(physeq, group, method="RLE", ...){
   require("edgeR")
   require("phyloseq")
