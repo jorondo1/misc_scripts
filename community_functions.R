@@ -78,7 +78,7 @@ read_filename <- function(filepath, column_names = default_colnames,
                quote = "", colClasses = 'character' # otherwise EOF error
                ) %>%
     mutate(sample = basename(filepath) %>% str_replace('_.*', ""),
-           Abundance = as.numeric(Abundance)*scale_reads/100 %>% round())
+           Abundance = round(as.numeric(Abundance)*scale_reads/100),0)
 }
 
 parse_MPA <- function(MPA_files, # path with wildcard to point to all files
