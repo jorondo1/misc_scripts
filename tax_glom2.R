@@ -87,7 +87,7 @@ tax_glom2 <- function(ps, taxrank) {
   
   # Create a new taxonomy table with only the selected taxrank
   tax_matrix <- tax_long[,1:taxrank_idx] %>% 
-    select(-OTU) %>%
+    dplyr::select(-OTU) %>%
     as.data.frame %>% 
     mutate(tax1=!!sym(taxrank)) %>% 
     distinct(!!sym(taxrank), .keep_all = TRUE) %>%  ## Some weird instances of same genera from different families...
