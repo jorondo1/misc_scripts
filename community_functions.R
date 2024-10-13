@@ -57,22 +57,36 @@ species_glom <- function(abundTable) {
 ### Parse MetaPhlAn output ####
 ################################
 default_colnames <- c('Taxonomy', 'Abundance')
-read_filename <- function(filepath, column_names = default_colnames) {
-  readLines(filepath) %>% 
+read_filename <- function(filepath, column_names = default_colnames,
+                          convert_to_counts) {
+  raw <- readLines(filepath)
+  
+  # MetaPhlan outputs relative abundances, we scale it using the total #reads
+  # Optional, because other tools (Kraken, mOTUs) use the MPA-stye tables but
+  # already output read counts.
+  if (convert_to_counts) {
+    processed <- grep("reads processed", raw, value = TRUE)
+    scale_reads <- as.numeric(gsub("[^0-9]", "", processed))
+  } else {
+    scale_reads <- 1
+    }
+  
+  raw %>% 
     grep("^[^#]", ., value = TRUE) %>% # discard header lines
     textConnection %>% # create connection to chr vector, enables file-reading fun for in-memory strings
     read.table(sep = '\t', header = FALSE, col.names=column_names, 
                quote = "", colClasses = 'character' # otherwise EOF error
                ) %>%
     mutate(sample = basename(filepath) %>% str_replace('_.*', ""),
-           Abundance = as.numeric(Abundance))
+           Abundance = as.numeric(Abundance)*scale_reads/100 %>% round())
 }
 
 parse_MPA <- function(MPA_files, # path with wildcard to point to all files
-                      column_names = default_colnames){ 
-  Sys.glob(MPA_files) %>% 
-    map(read_filename, column_names) %>% #compact %>% 
-    list_rbind %>% tibble %>% # Keep only lines with species, remove duplicates at strain level
+                      column_names = default_colnames,
+                      convert_to_counts = FALSE){ 
+  raw <- Sys.glob(MPA_files) %>% 
+    map(read_filename, column_names, convert_to_counts) %>% #compact %>% 
+    list_rbind %>% tibble %>%  # Keep only lines with species, remove duplicates at strain level
     dplyr::filter(str_detect(Taxonomy, "s__") & !str_detect(Taxonomy,"t__")) %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     mutate(Abundance = as.double(Abundance)) %>% 
