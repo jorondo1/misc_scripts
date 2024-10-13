@@ -97,7 +97,8 @@ tax_glom2 <- function(ps, taxrank) {
   # Rebuild the phyloseq object with the aggregated OTU and taxonomy tables
   new_ps <- phyloseq(
     otu_table(otu_matrix, taxa_are_rows = TRUE),
-    tax_table(tax_matrix)
+    tax_table(tax_matrix),
+    sample_data(ps@sam_data)
   )
   
   return(new_ps)
