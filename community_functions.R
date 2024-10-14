@@ -58,7 +58,7 @@ species_glom <- function(abundTable) {
 ################################
 default_colnames <- c('Taxonomy', 'Abundance')
 read_filename <- function(filepath, column_names = default_colnames,
-                          convert_to_counts) {
+                          convert_to_counts = FALSE) {
   raw <- readLines(filepath)
   
   # MetaPhlan outputs relative abundances, we scale it using the total #reads
@@ -66,7 +66,7 @@ read_filename <- function(filepath, column_names = default_colnames,
   # already output read counts.
   if (convert_to_counts) {
     processed <- grep("reads processed", raw, value = TRUE)
-    scale_reads <- as.numeric(gsub("[^0-9]", "", processed))
+    scale_reads <- as.numeric(gsub("[^0-9]", "", processed))/100
   } else {
     scale_reads <- 1
     }
@@ -78,7 +78,7 @@ read_filename <- function(filepath, column_names = default_colnames,
                quote = "", colClasses = 'character' # otherwise EOF error
                ) %>%
     mutate(sample = basename(filepath) %>% str_replace('_.*', ""),
-           Abundance = round(as.numeric(Abundance)*scale_reads/100),0)
+           Abundance = round(as.numeric(Abundance)*scale_reads),0)
 }
 
 parse_MPA <- function(MPA_files, # path with wildcard to point to all files
@@ -87,7 +87,8 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
   raw <- Sys.glob(MPA_files) %>% 
     map(read_filename, column_names, convert_to_counts) %>% #compact %>% 
     list_rbind %>% tibble %>%  # Keep only lines with species, remove duplicates at strain level
-    dplyr::filter(str_detect(Taxonomy, "s__") & !str_detect(Taxonomy,"t__")) %>% 
+    dplyr::filter(str_detect(Taxonomy, "s__") & 
+                    !str_detect(Taxonomy,"t__")) %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     mutate(Abundance = as.double(Abundance)) %>% 
     group_by(Taxonomy, sample) %>% 
