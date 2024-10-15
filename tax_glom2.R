@@ -99,7 +99,8 @@ tax_glom2 <- function(ps, taxrank) {
     otu_table(otu_matrix, taxa_are_rows = TRUE),
     tax_table(tax_matrix),
     sample_data(ps@sam_data)
-  )
+  ) %>% 
+  prune_samples(sample_sums(.) > 0, .) %>%  #remove any empty samples 
+    prune_taxa(taxa_sums(.) > 0,.) #remove taxa absent from all
   
-  return(new_ps)
 }

@@ -70,7 +70,7 @@ read_filename <- function(filepath, column_names = default_colnames,
   } else {
     scale_reads <- 1
     }
-  
+    #headers <- grep("#clade_name", raw, value = TRUE)
   raw %>% 
     grep("^[^#]", ., value = TRUE) %>% # discard header lines
     textConnection %>% # create connection to chr vector, enables file-reading fun for in-memory strings
@@ -84,7 +84,7 @@ read_filename <- function(filepath, column_names = default_colnames,
 parse_MPA <- function(MPA_files, # path with wildcard to point to all files
                       column_names = default_colnames,
                       convert_to_counts = FALSE){ 
-  raw <- Sys.glob(MPA_files) %>% 
+  Sys.glob(MPA_files) %>% 
     map(read_filename, column_names, convert_to_counts) %>% #compact %>% 
     list_rbind %>% tibble %>%  # Keep only lines with species, remove duplicates at strain level
     dplyr::filter(str_detect(Taxonomy, "s__") & 
