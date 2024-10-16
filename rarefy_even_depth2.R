@@ -2,7 +2,7 @@
 
 rarefy_even_depth2 <- function (
     physeq, sample.size = min(sample_sums(physeq)), rngseed = FALSE, 
-    replace = TRUE, trimOTUs = TRUE, verbose = FALSE
+    replace = TRUE, trimOTUs = TRUE, verbose = FALSE, ncores = detectCores()-1
 ) 
 { 
   if (!requireNamespace("doParallel", quietly = TRUE)) {
@@ -61,7 +61,7 @@ rarefy_even_depth2 <- function (
     return(res)
   }
   # apply through each sample, and replace
-  threads = detectCores()-1
+  threads = ncores
   registerDoParallel(cores=threads)
   newotu <- applyByCol(otu_table(newsub), 
                        phyloseq:::rarefaction_subsample,
