@@ -24,11 +24,11 @@ parse_SM <- function(gather_files) {
     # Process output and return
     gather_data %>% 
       dplyr::select(run, uniqueK, genome) %>% 
-      pivot_wider(names_from = run,
+      tidyr::pivot_wider(names_from = run,
                   values_from = uniqueK) %>% 
       replace(is.na(.), 0) %>% 
       arrange(genome) %>% 
-      mutate(across(where(is.numeric), \(x) round(x, digits=0)))
+      dplyr::mutate(across(where(is.numeric), \(x) round(x, digits=0)))
 }
 
 # To parse the gtdb taxonomy 
@@ -49,7 +49,7 @@ parse_genbank_lineages <- function(file) {
 species_glom <- function(abundTable) {
   abundTable %<>% 
     group_by(Kingdom, Phylum, Class, Order, Family, Genus, Species) %>% #keep those
-    summarise(across(where(is.numeric), sum, na.rm = TRUE),  # Sum the sample abundance columns
+    dplyr::summarise(across(where(is.numeric), sum, na.rm = TRUE),  # Sum the sample abundance columns
               .groups = "drop")     
 }
 
@@ -92,8 +92,8 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     mutate(Abundance = as.double(Abundance)) %>% 
     group_by(Taxonomy, sample) %>% 
-    summarise(Abundance = sum(Abundance), .groups='drop') %>% # sum strains into species if applicable
-    pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
+    dplyr::summarise(Abundance = sum(Abundance), .groups='drop') %>% # sum strains into species if applicable
+    tidyr::pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
     mutate(Kingdom = str_extract(Taxonomy, "k__[^|]+") %>% str_remove("k__"),
            Phylum = str_extract(Taxonomy, "p__[^|]+") %>% str_remove("p__"),
            Class = str_extract(Taxonomy, "c__[^|]+") %>% str_remove("c__"),
