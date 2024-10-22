@@ -52,7 +52,8 @@ tax_glom2 <- function(ps, taxrank) {
   }
   
   # Melt the OTU table to long format
-  otu_long <- otu_table(ps) %>% data.frame %>% 
+  otu_long <- otu_table(ps) %>% 
+    data.frame(check.names = FALSE) %>% # avoid sample name modification
     rownames_to_column('OTU') %>% 
     tidyr::pivot_longer(-OTU, names_to = "Sample", values_to = "Abundance")
   

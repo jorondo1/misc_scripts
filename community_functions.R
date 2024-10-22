@@ -14,7 +14,7 @@ genome_col_name_version <- function(df) {
 parse_SM <- function(gather_files) {
   gather_data <- Sys.glob(gather_files) %>% 
     map_dfr(read_csv, col_types='ddddddddcccddddcccddcddcddddddd') %>%
-    mutate(
+    dplyr::mutate(
       uniqueK = (unique_intersect_bp/scaled)*average_abund,
       genome = genome_col_name_version(pick(everything())), 
       run = str_replace(query_name, "_clean", ""), 
@@ -43,7 +43,7 @@ parse_genbank_lineages <- function(file) {
   read_delim(file, show_col_types = FALSE, 
              col_names = c('ident','taxid','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species','Strain')) %>% 
     dplyr::select(-taxid) %>% 
-    mutate(genome = ident, .keep = 'unused')
+    dplyr::mutate(genome = ident, .keep = 'unused')
   }
 
 species_glom <- function(abundTable) {
@@ -77,7 +77,7 @@ read_filename <- function(filepath, column_names = default_colnames,
     read.table(sep = '\t', header = FALSE, col.names=column_names, 
                quote = "", colClasses = 'character' # otherwise EOF error
                ) %>%
-    mutate(sample = basename(filepath) %>% str_replace('_.*', ""),
+    dplyr::mutate(sample = basename(filepath) %>% str_replace('_.*', ""),
            Abundance = round(as.numeric(Abundance)*scale_reads),0)
 }
 
@@ -90,11 +90,11 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
     dplyr::filter(str_detect(Taxonomy, "s__") & 
                     !str_detect(Taxonomy,"t__")) %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>% 
-    mutate(Abundance = as.double(Abundance)) %>% 
+    dplyr::mutate(Abundance = as.double(Abundance)) %>% 
     group_by(Taxonomy, sample) %>% 
     dplyr::summarise(Abundance = sum(Abundance), .groups='drop') %>% # sum strains into species if applicable
     tidyr::pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
-    mutate(Kingdom = str_extract(Taxonomy, "k__[^|]+") %>% str_remove("k__"),
+    dplyr::mutate(Kingdom = str_extract(Taxonomy, "k__[^|]+") %>% str_remove("k__"),
            Phylum = str_extract(Taxonomy, "p__[^|]+") %>% str_remove("p__"),
            Class = str_extract(Taxonomy, "c__[^|]+") %>% str_remove("c__"),
            Order = str_extract(Taxonomy, "o__[^|]+") %>% str_remove("o__"),
