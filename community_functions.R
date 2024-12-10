@@ -125,7 +125,12 @@ vst_ps_to_mx <- function(ps) {
 # 2. the eigenvalues
 # 3. the distance/dissimilarity matrix
 compute_pcoa <- function(ps, dist) {
+  require(DESeq2)
+  require(phyloseq)
+  require(vegan)
+  
   vst <- ifelse(dist == 'bray', TRUE, FALSE) 
+  
   dist.mx <- ps %>%
     { 
       counts <- if (vst) vst_ps_to_mx(.) else otu_table(.)
