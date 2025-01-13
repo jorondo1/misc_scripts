@@ -128,15 +128,33 @@ compute_pcoa <- function(ps, dist) {
   require(DESeq2)
   require(phyloseq)
   require(vegan)
+  require(dplyr)
+  
+  # Validate distance
+  dist_list <- c("unifrac.u","unifrac.w","manhattan", "euclidean", "canberra", "clark", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup", "binomial", "chao", "cao", "mahalanobis", "chisq", "chord", "hellinger", "aitchison", "robust.aitchison")
+  if (!dist %in% dist_list) {
+    stop(paste(c("Distance must be one of the following:", dist_list), collapse = ", "))
+  }
+  
+  # Validate tree if distance is UniFrac
+  if (dist %in% dist_list & is.null(phy_tree(ps))) {
+    stop(paste("The provided phyloseq object does not contain a tree.", dist, "requires a reference tree."))
+  } 
   
   vst <- ifelse(dist == 'bray', TRUE, FALSE) 
-  
-  dist.mx <- ps %>%
-    { 
-      counts <- if (vst) vst_ps_to_mx(.) else otu_table(.)
-      if (taxa_are_rows(ps) & !vst) t(counts) else counts
-      } %>% 
-    vegan::vegdist(method = dist)
+
+   dist.mx <- if (dist == 'unifrac.w') {
+       UniFrac(ps, weighted = TRUE, parallel = TRUE)
+     } else if (dist == 'unifrac.u') {
+       UniFrac(ps, weighted = FALSE, parallel = TRUE)
+     } else {
+       ps %>%
+      {
+        counts <- if (vst) vst_ps_to_mx(.) else otu_table(.)
+        if (taxa_are_rows(ps) & !vst) t(counts) else counts
+      } %>%
+      vegan::vegdist(method = dist)
+  }
   
   PCoA <- capscale(dist.mx~1, distance = dist)
   eig <- round(PCoA$CA$eig[1:3]/sum(PCoA$CA$eig),2)
