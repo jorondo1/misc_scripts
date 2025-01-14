@@ -1,9 +1,9 @@
 A quick guide to access ip34 (aka Mammouth) ! Steps 0, 1 and 3 only need to be done once. If you need a quick primer on the bash language syntax, which what the code blocks below are written in, checkout Mike Lee's [awesome tutorial](https://astrobiomike.github.io/unix/unix-intro). 
 
-# 0. Create a DRAC account
+## 0. Create a DRAC account
 To work on ip34, you need a [Digital Research Alliance of Canada](https://ccdb.alliancecan.ca/security/login) account. Ask your director for their sponsorship code.
 
-# 1. Initial setup (locally)
+## 1. Initial setup (locally)
 This will periodically send a signal to ip34 to make sure you don't spontaneously get logged out. _You only need to do this once._
 
 ### Mac 
@@ -24,7 +24,7 @@ Host remote_server_ip
 Save it and quit. 
 Then, open the PowerShell app and proceed with the next steps.
 
-# 2. Log onto ip34
+## 2. Log onto ip34
 To access ip34, run this command with your DRAC username (will prompt for password; nothing shows when you'll write your password, that's normal!)
 
 	ssh <username>@ip34.ccs.usherbrooke.ca
@@ -35,7 +35,7 @@ Once you are logged in, *you must* run the following command, each and every tim
 	
 Otherwise, any file you create will only be readable and writable by you.
 
-# 3. Initial setup (ip34)
+## 3. Initial setup (ip34)
 _You'll only need to do this once, ever._ It will add a few lines to your `.bashrc` file, which is executed every time you login. 
 
 	echo umask 007 >> ~/.bashrc
@@ -57,7 +57,9 @@ Again, these last two commands only need to be done once. Then, whenever you log
 	
 And you can start doing science!
 
-# Loading the R environment 
+## 4. Going further...
+
+### Loading the R environment 
 
 If you need extra juice to run a massive DADA2 pipeline your laptop can't handle, for example, you can load the R environment within ip34.
 
@@ -69,7 +71,7 @@ Once you run this, you are now in the equivalent of an R console, which accepts 
 ### Multithread support of ip34
 The cool thing about ip34 is that there are 96 cores available. So whenever the function your run has a `threads` or `cores` argument or something like that, you can choose how many to use. *However, keep in mind that you are not alone on ip34!* It is generally frowned upon to huddle all the cores. Try to limit yourself to 24 for most purposes. If you need more, there are 1500 computing nodes that can be used, but this requires a little extra legwork in terms of scripting (but you're having fun so that shouldn't be an issue!).
 
-# Having stuff run in the background
+### Making stuff run in the background
 Imagine you want to run DADA2's sample inference on hundreds of samples... that might take a while! If you want to go home and let it run while you binge-watch Friends, you can either let your laptop running (not recommended), or use a cool little tool called `tmux` directly on ip34. Essentially, tmux creates a virtual shell that runs in the background. If you close your ip34 session (or just log out), it keeps running. Within that tmux shell, you can run anything like you would on your normal shell. To get it running, log in to ip34, get where you need to be, then run:
 
 	tmux
