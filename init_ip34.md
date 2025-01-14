@@ -16,8 +16,8 @@ Open the Terminal app and run the following:
 3. Add the following lines to the file :
 
 	Host remote_server_ip
-    	ServerAliveInterval 60
-
+		ServerAliveInterval 60
+    	
 Save it and quit. 
 Then, open the PowerShell app and proceed with the next steps.
 # Log onto ip34
