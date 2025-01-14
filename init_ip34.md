@@ -15,9 +15,10 @@ Open the Terminal app and run the following:
 2. Open the config file; if there is none, right-click inside the .ssh folder and select New > Text Document
 3. Add the following lines to the file :
 
+```
 	Host remote_server_ip
 		ServerAliveInterval 60
-    	
+ ```	
 Save it and quit. 
 Then, open the PowerShell app and proceed with the next steps.
 # Log onto ip34
