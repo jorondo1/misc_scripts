@@ -2,7 +2,7 @@
 To work on ip34, you need a [Digital Research Alliance of Canada](https://ccdb.alliancecan.ca/security/login) account. Ask your director for their sponsorship code.
 
 # Setup your shell locally
-This will periodically send a signal to ip34 to make sure you don't spontaneously get logged out.
+This will periodically send a signal to ip34 to make sure you don't spontaneously get logged out. You only need to do this once.
 
 ## Mac 
 Open the Terminal app and run the following: 
