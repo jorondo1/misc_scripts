@@ -24,8 +24,8 @@ Host remote_server_ip
 Save it and quit. 
 Then, open the PowerShell app and proceed with the next steps.
 
-## 2. Log onto ip34
-To access ip34, run this command with your DRAC username (will prompt for password; nothing shows when you'll write your password, that's normal!)
+## 2. Logging on to ip34 (might want to write these somewhere)
+Whenever you want to access ip34, run this command with your DRAC username (will prompt for password; nothing shows when you'll write your password, that's normal!)
 
 	ssh <username>@ip34.ccs.usherbrooke.ca
 	
