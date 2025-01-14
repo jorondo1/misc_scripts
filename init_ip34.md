@@ -13,7 +13,7 @@ Open the Terminal app and run the following:
 	echo ServerAliveInterval 60 >> ~/.ssh/config 
 
 ### Windows
-1. Navigate to your home folder, typically under `C:\Users:\<username>\.ssh
+1. Navigate to your home folder, typically under `C:\Users:\<username>\.ssh`
 2. Open the config file; if there is none, right-click inside the .ssh folder and select New > Text Document
 3. Add the following lines to the file :
 
