@@ -1,16 +1,16 @@
-# Create a DRAC account
+# 0. Create a DRAC account
 To work on ip34, you need a [Digital Research Alliance of Canada](https://ccdb.alliancecan.ca/security/login) account. Ask your director for their sponsorship code.
 
-# Setup your shell locally
-This will periodically send a signal to ip34 to make sure you don't spontaneously get logged out. You only need to do this once.
+# 1. Initial setup (locally)
+This will periodically send a signal to ip34 to make sure you don't spontaneously get logged out. _You only need to do this once._
 
-## Mac 
+### Mac 
 Open the Terminal app and run the following: 
 
 	echo "Host *" >>  ~/.ssh/config 
 	echo ServerAliveInterval 60 >> ~/.ssh/config 
 
-## Windows
+### Windows
 1. Navigate to your home folder, typically under `C:\Users:\<username>\.ssh
 2. Open the config file; if there is none, right-click inside the .ssh folder and select New > Text Document
 3. Add the following lines to the file :
@@ -22,7 +22,7 @@ Host remote_server_ip
 Save it and quit. 
 Then, open the PowerShell app and proceed with the next steps.
 
-# Log onto ip34
+# 2. Log onto ip34
 To access ip34, run this command with your DRAC username (will prompt for password; nothing shows when you'll write your password, that's normal!)
 
 	ssh <username>@ip34.ccs.usherbrooke.ca
@@ -33,8 +33,8 @@ Once you are logged in, *you must* run the following command, each and every tim
 	
 Otherwise, any file you create will only be readable and writable by you.
 
-# Initial setup 
-You'll only need to do this once, ever. It will add a few lines to your `.bashrc` file, which is executed every time you login. 
+# 3. Initial setup (ip34)
+_You'll only need to do this once, ever._ It will add a few lines to your `.bashrc` file, which is executed every time you login. 
 
 	echo umask 007 >> ~/.bashrc
 	echo export MUGQIC_INSTALL_HOME=/cvmfs/soft.mugqic/CentOS6 >> ~/.bashrc
@@ -55,7 +55,7 @@ Again, these last two commands only need to be done once. Then, whenever you log
 	
 And you can start doing science!
 
-# Leading the R environment 
+# Loading the R environment 
 
 If you need extra juice to run a massive DADA2 pipeline your laptop can't handle, for example, you can load the R environment within ip34.
 
