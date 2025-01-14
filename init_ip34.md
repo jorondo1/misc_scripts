@@ -82,6 +82,6 @@ The text will disappear on your shell and a green line will appear at the bottom
 	
 You first session will be session 0, and you can reattach to it by doing 
 
-	tmux a -t 0
+	tmux attach -t 0
 	
-And you'll see your code is still running.
+And you'll see your code is still running. To learn more about tmux (like how to see multiple sessions simultaneously), I suggest [this blog post](https://www.redhat.com/en/blog/introduction-tmux-linux).
