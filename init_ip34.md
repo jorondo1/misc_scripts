@@ -16,23 +16,24 @@ Open the Terminal app and run the following:
 3. Add the following lines to the file :
 
 ```
-	Host remote_server_ip
-		ServerAliveInterval 60
+Host remote_server_ip
+	ServerAliveInterval 60
  ```	
 Save it and quit. 
 Then, open the PowerShell app and proceed with the next steps.
 # Log onto ip34
 To access ip34, run this command with your DRAC username (will prompt for password; nothing shows when you'll write your password, that's normal!)
 
-	ssh username@ip34.ccs.usherbrooke.ca
+	ssh <username>@ip34.ccs.usherbrooke.ca
 	
-Each time you log onto ip34, *you must* run the following command.
+Once you are logged in, *you must* run the following command, each and every time.
 
 	newgrp def-ilafores
+	
 Otherwise, any file you create will only be readable and writable by you.
 
 # Initial setup 
-Do this only once! It will add a few lines to your .bashrc file, which is executed every time you login. 
+You'll only need to do this once, ever. It will add a few lines to your `.bashrc` file, which is executed every time you login. 
 
 	echo umask 007 >> ~/.bashrc
 	echo export MUGQIC_INSTALL_HOME=/cvmfs/soft.mugqic/CentOS6 >> ~/.bashrc
@@ -50,7 +51,3 @@ Again, these last two commands only need to be done once (the second one simply 
 	mkdir $PROJECT1
 	cd $PROJECT1
 	
-# Locally
-# Windows: 
-
-# Mac
