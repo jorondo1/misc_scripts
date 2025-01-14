@@ -3,6 +3,7 @@
 
 # User's group identification
 Each time you log in, you must run this command. Otherwise, any file you create will only be readable and writable by you.
+
 	newgrp def-ilafores
 
 
