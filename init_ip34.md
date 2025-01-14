@@ -83,12 +83,3 @@ You first session will be session 0, and you can reattach to it by doing
 	tmux a -t 0
 	
 And you'll see your code is still running.
-
-
-
-
-
-
-
-
-	
