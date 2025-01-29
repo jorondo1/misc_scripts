@@ -66,7 +66,7 @@ If you need extra juice to run a massive DADA2 pipeline your laptop can't handle
 	module load StdEnv/2023 r/4.4.0 mugqic/cutadapt/2.10
 	R
 
-Once you run this, you are now in the equivalent of an R console, which accepts R commands. You'll need to install the packages you need only once, as you once did on your computer. By default, your current directory will be the one you were in when you activated R. 
+Once you run this, you are now in the equivalent of an R console, which accepts R commands. You'll need to install the packages you need (only once), as you once did on your computer. By default, your current directory will be the one you were in when you activated R. 
 
 ### Multithread support of ip34
 The cool thing about ip34 is that there are 96 cores available. So whenever the function your run has a `threads` or `cores` argument or something like that, you can choose how many to use. *However, keep in mind that you are not alone on ip34!* It is generally frowned upon to huddle all the cores. Try to limit yourself to 24 for most purposes. If you need more, there are 1500 computing nodes that can be used, but this requires a little extra legwork in terms of scripting (but you're having fun so that shouldn't be an issue!).
