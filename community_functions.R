@@ -11,6 +11,7 @@ genome_col_name_version <- function(df) {
     return(str_replace_all(df$match_name, c(" .*" = "", ".fa.sig" = "")))
   }
 }
+
 parse_SM <- function(gather_files) {
   gather_data <- Sys.glob(gather_files) %>% 
     map_dfr(read_csv, col_types='ddddddddcccddddcccddcddcddddddd') %>%
@@ -229,3 +230,12 @@ div.fun <- function(ps, idx) {
   div_estimate[["Tail"]] <- estimate_diversity(ps, index = "Tail")
   return(div_estimate)
 }
+
+
+# Get a phyloseq object's sample data as tibble
+samdat_as_tibble <- function(ps){
+  sample_data(ps) %>% 
+    as.data.frame %>% 
+    rownames_to_column('Sample')
+}
+
