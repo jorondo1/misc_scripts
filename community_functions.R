@@ -132,13 +132,14 @@ compute_pcoa <- function(ps, dist) {
   require(dplyr)
   
   # Validate distance
-  dist_list <- c("unifrac.u","unifrac.w","manhattan", "euclidean", "canberra", "clark", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup", "binomial", "chao", "cao", "mahalanobis", "chisq", "chord", "hellinger", "aitchison", "robust.aitchison")
+  unifrac_names <- c("unifrac.u","unifrac.w")
+  dist_list <- c(unifrac_names,"manhattan", "euclidean", "canberra", "clark", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup", "binomial", "chao", "cao", "mahalanobis", "chisq", "chord", "hellinger", "aitchison", "robust.aitchison")
   if (!dist %in% dist_list) {
     stop(paste(c("Distance must be one of the following:", dist_list), collapse = ", "))
   }
   
   # Validate tree if distance is UniFrac
-  if (dist %in% dist_list & is.null(phy_tree(ps))) {
+  if (dist %in% unifrac_names & is.null(phy_tree(ps, errorIfNULL = FALSE))) {
     stop(paste("The provided phyloseq object does not contain a tree.", dist, "requires a reference tree."))
   } 
   
@@ -233,9 +234,11 @@ div.fun <- function(ps, idx) {
 
 
 # Get a phyloseq object's sample data as tibble
+# Creates a Sample column with the sample names
 samdat_as_tibble <- function(ps){
   sample_data(ps) %>% 
-    as.data.frame %>% 
-    rownames_to_column('Sample')
+    data.frame %>% 
+    rownames_to_column('Sample') %>% 
+    tibble
 }
 
