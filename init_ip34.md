@@ -48,9 +48,9 @@ This setup will allow others within your group (def-ilafores) to write/execute f
 
 In the following, replace your_project_name with the name you want your project directory to have, and PROJECT1 by a short name you'll remember (it will create a variable pointing to your project directory path, which you can use in place of the path when using the command line).
 
-	echo "export PROJECT1=$ILAFORES/analysis/your_project_name" >> ~/.bashrc ## Makes sure the variable exists whenever you log in
-	. ~/.bashrc # execute the bashrc, otherwise you need to log out and back in for it to execute
-	mkdir -p $PROJECT1 # create your project directory
+	echo "export PROJECT1=$ILAFORES/analysis/your_project_name" >> ~/.bashrc        ## Makes sure the variable exists whenever you log in
+	. ~/.bashrc                   # execute the bashrc, otherwise you need to log out and back in for it to execute
+	mkdir -p $PROJECT1                # create your project directory
 
 Again, these last two commands only need to be done once (per project). Then, whenever you log in to ip34, using the project directory variable name you've chosen (here PROJECT1), all you have to do is
 
