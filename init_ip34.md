@@ -25,10 +25,10 @@ Save it and quit.
 Then, open the PowerShell app and proceed with the next steps.
 
 ## 2. Logging on to ip34 (might want to write these somewhere)
-Whenever you want to access ip34, run this command with your DRAC username (will prompt for password; nothing shows when you'll write your password, that's normal!)
+Whenever you want to access ip34, run this command with your DRAC username (will prompt for password; nothing shows when you'll write your password, that's normal!). Here, use the username to your DRAC account (not your email), for example :
 
-	ssh <username>@ip34.ccs.usherbrooke.ca
-	
+	ssh username@ip34.ccs.usherbrooke.ca
+ 
 Once you are logged in, *you must* run the following command, each and every time.
 
 	newgrp def-ilafores
