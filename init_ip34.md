@@ -48,7 +48,7 @@ This setup will allow others within your group (def-ilafores) to write/execute f
 
 	echo "export PROJECT1=$ILAFORES/analysis/your_project_name" >> ~/.bashrc
 	. ~/.bashrc
-	mkdir $PROJECT1
+	mkdir -p $PROJECT1
 
 Again, these last two commands only need to be done once. Then, whenever you log in to ip34, using the project directory variable name you've chosen (here PROJECT1), all you have to do is
 
