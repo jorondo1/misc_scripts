@@ -46,6 +46,8 @@ _You'll only need to do this once, ever._ It will add a few lines to your `.bash
 	
 This setup will allow others within your group (def-ilafores) to write/execute files you've created, allow you to access certain programs on mugqic, and finally will create a simple variable you can use to navigate to the def-ilafores directory, which is where you should generally work from. To get there and, for example, create a new project (under the analysis folder would be the best place), I suggest adding another variable to your `.bashrc` that will let you use the path to your project directory without having to type it in its entirety every time.
 
+In the following, replace your_project_name with the name you want your project directory to have, and PROJECT1 by a short name you'll remember (it will create a variable pointing to your project directory path, which you can use in place of the path when using the command line).
+
 	echo "export PROJECT1=$ILAFORES/analysis/your_project_name" >> ~/.bashrc
 	. ~/.bashrc
 	mkdir -p $PROJECT1
