@@ -18,7 +18,7 @@ subset_asvs <- function(taxonomy, seqtab, min_seq) {
     taxonomy <- as.data.frame(taxonomy)
   }
   
-  asvs <- subset(taxonomy, Kingdom != "Unclassified") %>% # subset needs the input to be a df
+  asvs <- subset(taxonomy, Phylum != "Unclassified") %>% # subset needs the input to be a df
     rownames %>% 
     intersect(
       colnames(seqtab)[colSums(seqtab) >= min_seq] 
