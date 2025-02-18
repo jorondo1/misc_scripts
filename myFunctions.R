@@ -2,19 +2,6 @@
 ### PROCESSING DADA2 ####
 ########################
 
-# List and write out sample names
-get.sample.name <- function(fname, prefix) { # fname: file path, prefix : string to be added a the beggining of sample ID
-  base <- tools::file_path_sans_ext(basename(fname))
-  if (missing(prefix)) {
-    return(sub("_.*$", "", base))
-  }
-  paste0(prefix, '-', sub("_.*$", "", base))
-}
-# extract the name of a fastq file
-# example: "AGL-PISA-1-FE-197_S117_L001_R1_001.fastq.gz" would become "2023-AGL-PISA-1-FE-197"
-# to resolve the problem of the different sample name from the sequencer
-# note: works without a prefix
-
 
 ### Verify the presence and orientation of these primers in the data
 allOrients <- function(primer) {
@@ -86,9 +73,7 @@ track_dada <- function(out.N, out,
   out <- transform_df(out) %>% select(1,3) # selecting the 'Sample' and 'read.out' columns
   
   go.1 <- out.N %>%
-    left_join(out, by = "Sample") %>%
-    mutate(Sample = sub("_.*$", "", Sample)) %>% # enlever tout après ex: -ITS*
-    mutate(Sample = paste0(year, '-', Sample)) # ajouter l'année
+    left_join(out, by = "Sample") 
   
   # transform each variable
   go.2 <- transform_df(sapply(dadaFs, getN)) 
