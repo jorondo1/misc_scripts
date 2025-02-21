@@ -27,11 +27,10 @@ subset_asvs <- function(taxonomy, seqtab, min_seq) {
 }
 
 # Remove samples with fewer than n sequences once taxa removed
-
 remove_ultra_rare <- function(seqtab, taxonomy, n) { 
   result <- seqtab[, rownames(taxonomy), drop = FALSE]  # Ensure it stays a data frame
   result <- result[rowSums(result) > n, , drop = FALSE]  # Filter rows (samples). n = sum across ASVs in a sample
-  
+  result <- result[,colSums(result) > 1, drop = FALSE] # Remove singleton ASVs
   return(result)
 }
 
