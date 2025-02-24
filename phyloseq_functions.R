@@ -34,6 +34,13 @@ remove_ultra_rare <- function(seqtab, taxonomy, n) {
   return(result)
 }
 
+# Visualise sequence count distribution across samples 
+viz_seqdepth <- function(seqtab) {
+  hist(rowSums(seqtab), breaks = 100, 
+       xlab = "sample size", xaxt = "n", main = 'Distribution of sequence count per sample')
+  axis(1, at = pretty(rowSums(seqtab), n = 40))  # adding ticks 
+}
+
 # Export ASVs as fasta
 asv_to_fasta <- function(seqtab, path.out) {
   require(Biostrings)
