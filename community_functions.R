@@ -95,15 +95,20 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
     group_by(Taxonomy, sample) %>% 
     dplyr::summarise(Abundance = sum(Abundance), .groups='drop') %>% # sum strains into species if applicable
     tidyr::pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
-    dplyr::mutate(Kingdom = str_extract(Taxonomy, "k__[^|]+") %>% str_remove("k__"),
-           Phylum = str_extract(Taxonomy, "p__[^|]+") %>% str_remove("p__"),
-           Class = str_extract(Taxonomy, "c__[^|]+") %>% str_remove("c__"),
-           Order = str_extract(Taxonomy, "o__[^|]+") %>% str_remove("o__"),
-           Family = str_extract(Taxonomy, "f__[^|]+") %>% str_remove("f__"),
-           Genus = str_extract(Taxonomy, "g__[^|]+") %>% str_remove("g__"),
-           Species = str_extract(Taxonomy, "s__[^|]+") %>% str_remove("s__")) %>%
+    dplyr::mutate(
+      Kingdom = str_extract(Taxonomy, "k__[^|]+") %>% str_remove("k__"),
+      Phylum = str_extract(Taxonomy, "p__[^|]+") %>% str_remove("p__"),
+      Class = str_extract(Taxonomy, "c__[^|]+") %>% str_remove("c__"),
+      Order = str_extract(Taxonomy, "o__[^|]+") %>% str_remove("o__"),
+      Family = str_extract(Taxonomy, "f__[^|]+") %>% str_remove("f__"),
+      Genus = str_extract(Taxonomy, "g__[^|]+") %>% str_remove("g__"),
+      Species = str_extract(Taxonomy, "s__[^|]+") %>% str_remove("s__")) %>%
     dplyr::select(-Taxonomy) 
   }
+
+# Remove samples whose read count is too low compared to the rest
+remove_low_depth_samples()
+
 
 ###################################
 ######## Distance-based analyses ###
