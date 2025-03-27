@@ -3,7 +3,7 @@
 # shamelessly AI generated
 # Creates a much smaller table because it omits every row for which Abundance == 0
 
-psmelt_dt <- function(physeq) {
+psflashmelt <- function(physeq) {
   if (!requireNamespace("data.table", quietly = TRUE)) {
     stop("Package 'data.table' needed for this function. Please install it.")
   }
