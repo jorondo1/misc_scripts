@@ -106,10 +106,6 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
     dplyr::select(-Taxonomy) 
   }
 
-# Remove samples whose read count is too low compared to the rest
-remove_low_depth_samples()
-
-
 ###################################
 ######## Distance-based analyses ###
 #####################################
