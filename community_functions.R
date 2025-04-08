@@ -28,6 +28,8 @@ parse_SM <- function(gather_files) {
       tidyr::pivot_wider(names_from = run,
                   values_from = uniqueK) %>% 
       replace(is.na(.), 0) %>% 
+      mutate(genome = genome %>% str_remove("^.*_") %>%  # Remove everything up to and including _
+               str_remove("\\..*$")) %>% 
       arrange(genome) %>% 
       dplyr::mutate(across(where(is.numeric), \(x) round(x, digits=0)))
 }
@@ -37,7 +39,9 @@ parse_GTDB_lineages <- function(file, colnames) {
   read_delim(file, show_col_types = FALSE,
              col_names = c('genome','rep','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')) %>% 
 #    mutate(genome = str_remove(genome, "^[^_]*_")) %>% 
-    mutate_all(~str_replace(., "^[A-Za-z]_+", ""))
+    mutate_all(~str_replace(., "^[A-Za-z]_+", "")) %>% 
+    mutate(genome = genome %>% str_remove("^.*_") %>%  # Remove everything up to and including _
+             str_remove("\\..*$"))
 }
 
 parse_genbank_lineages <- function(file) {
