@@ -39,7 +39,7 @@ parse_GTDB_lineages <- function(file, colnames) {
   read_delim(file, show_col_types = FALSE,
              col_names = c('genome','rep','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')) %>% 
 #    mutate(genome = str_remove(genome, "^[^_]*_")) %>% 
-    mutate_all(~str_replace(., "^[A-Za-z]_+", "")) %>% 
+    mutate_all(~str_remove(., "^[A-Za-z]_+")) %>% 
     mutate(genome = genome %>% str_remove("^.*_") %>%  # Remove everything up to and including _
              str_remove("\\..*$"))
 }
@@ -48,11 +48,14 @@ parse_genbank_lineages <- function(file) {
   read_delim(file, show_col_types = FALSE, 
              col_names = c('ident','taxid','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species','Strain')) %>% 
     dplyr::select(-taxid) %>% 
-    dplyr::mutate(genome = ident, .keep = 'unused')
+    dplyr::mutate(genome = ident, .keep = 'unused') %>% 
+    mutate_all(~str_remove(., "^[A-Za-z]_+")) %>% 
+    mutate(genome = genome %>% str_remove("^.*_") %>%  # Remove everything up to and including _
+             str_remove("\\..*$"))
   }
 
 species_glom <- function(abundTable) {
-  abundTable %<>% 
+  abundTable %>% 
     group_by(Kingdom, Phylum, Class, Order, Family, Genus, Species) %>% #keep those
     dplyr::summarise(across(where(is.numeric), sum, na.rm = TRUE),  # Sum the sample abundance columns
               .groups = "drop")     
@@ -116,7 +119,7 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
 assemble_phyloseq <- function(abunTable, sampleData, filtering = FALSE, justBacteria = TRUE) {
   
   abunTable %<>% 
-    {if(justBacteria) (.) %>% dplyr::filter(Kingdom == "Bacteria") else .} %>%
+    #{if(justBacteria) (.) %>% dplyr::filter(Kingdom == "Bacteria") else .} %>%
     mutate(across(where(is.character), \(x) {
       str_replace_all(x,'_', ' ') %>%
         str_replace('Candidatus ', '') %>% 
