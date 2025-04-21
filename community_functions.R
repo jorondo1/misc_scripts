@@ -119,7 +119,7 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
 assemble_phyloseq <- function(abunTable, sampleData, filtering = FALSE, justBacteria = TRUE) {
   
   abunTable %<>% 
-    #{if(justBacteria) (.) %>% dplyr::filter(Kingdom == "Bacteria") else .} %>%
+    {if(justBacteria) (.) %>% dplyr::filter(Kingdom %in% c("Bacteria","Archaea") | is.na(Kingdom)) else .} %>%
     mutate(across(where(is.character), \(x) {
       str_replace_all(x,'_', ' ') %>%
         str_replace('Candidatus ', '') %>% 
