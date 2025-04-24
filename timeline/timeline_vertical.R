@@ -80,7 +80,9 @@ ggplot(timeline_data) +
   # Add year markers
   geom_text(data = distinct(timeline_data, year = year(startdate)) %>%
               mutate(year_start = as.Date(paste0(year, "-01-15"))),  # Position in mid-January
-            aes(x = 0, y = year_start-24, label = year), # manually position the year label
+            aes(x = 0, 
+                y = year_start-22, # fine-tune the year label position vertically
+                label = year), 
             size = 3.5, fontface = "bold", 
             color = "gray30") +
   
@@ -92,7 +94,7 @@ ggplot(timeline_data) +
            label = format(seq(min(timeline_data$startdate), 
                               max(timeline_data$enddate)+20, 
                               by = "1 month"), "%b"),
-           size = 2.8, color = "gray40",
+           size = 3, color = "gray40",
            ) +
   
   # === INTERVAL EVENTS - LEFT SIDE
