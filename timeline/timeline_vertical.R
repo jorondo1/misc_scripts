@@ -194,18 +194,17 @@ ggplot(timeline_data) +
                   max.iter = 100) +
   theme_void() +
   
-  # Visual styling
-  scale_x_continuous(limits = c(-2, 2)) +
-  scale_y_continuous(trans = c('date', "reverse"),
-               labels = function(x) format(x, "%b"),  # Just 3-letter month abbreviations
-               expand = expansion(add = c(30, 30))) +
+  # === VISUAL 
+  scale_x_continuous(limits = c(-2, 2)) + # enclose a bit
+  scale_y_continuous(trans = c('date', "reverse")) + # Reverse y axis
+  scale_colour_manual(values = category.lvls, # custom colours
+                      labels = names(category.lvls)) +
   theme(
     axis.text = element_blank(),
     legend.position = "bottom",
-    legend.spacing.x = unit(5, "pt"),
     legend.text = element_text(size = 10)
   ) +
-  scale_colour_manual(values = category.lvls, labels = names(category.lvls)) +
+  # Required for tidy legend... remove it and see what happens (:
   guides(
     color = guide_legend(
       override.aes = list(
