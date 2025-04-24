@@ -1,0 +1,21 @@
+startdate	enddate	side	category	description
+2024-01-11	2024-04-11	left	Autre	Démonstrateur en travaux pratiques (BIO106)
+2024-01-23	2024-01-23	right	Présentations orales	Best Practices for Analysing Microbiomes (UdS)
+2024-01-09	2024-01-10	right	Enseignement	Atelier Plots with R (UdS)
+2024-02-07	2024-04-17	right	Formation	ECL750 - Analyse avancée des données écologiques
+2024-04-04	2024-04-04	right	Enseignement	Séance de 2h sur les modèles linéaires (BIO106)
+2024-02-12	2024-02-12	left	Présentations orales	Metagenomics of an Understudied Microbione (lab. Steven W. Kembell, UQAM)
+2024-05-08	2024-05-08	left	Milestones	1ère réunion de comité des conseillers
+2024-09-06	2024-09-06	left	Présentations orales	Metagenomics of an Understudied Microbiome (Microbiome Informatics Group, EMBL-EBI, UK)
+2024-07-12	2024-07-16	right	Conférence	Poster: Estimating Community Composition of Understudied Microbiomes Through Novel Species Genome Assemblies (ISMB 2024, Montréal)
+2024-09-27	2024-09-27	left	Milestones	Publication de Ishak et al. 2024 (co-premier auteur)
+2024-09-09	2024-09-11	right	Formation	Lichen Metagenomics Hackathon (Wellcome Sanger Institute, UK)
+2024-10-23	2024-10-23	left	Enseignement	Séance de 3 h sur la métagénomique (BFT708)
+2024-10-29	2024-11-02	right	Conférence	Poster: Methodological Choices Influence Community Analyses in Taxonomy-Oriented Shotgun Metagenomics (MICROBIOME 2024, CSHL, US)
+2024-12-04	2024-12-04	left	Présentations orales	Séminaire 1
+2025-01-09	2025-04-10	left	Autre	Démonstrateur en travaux pratiques (BIO106)
+2025-01-28	2025-02-25	right	Enseignement	Analyse de données amplicons (3 séances en lab meeting)
+2025-02-10	2025-02-10	right	Enseignement	Séance de 2 h sur les tests d’hypothèse (BIO106)
+2025-04-30	2025-04-30	left	Milestones	2e réunion du comité des conseillers
+2025-05-05	2025-05-09	right	Formation	École d’été en statistiques avancées en sciences de la vie
+2025-05-12	2025-05-14	left	Enseignement	Atelier R workshop (Biologie)
