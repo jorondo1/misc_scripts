@@ -1,5 +1,5 @@
 library(pacman)
-p_load(ggplot2, dplyr, lubridate, scales, ggrepel)
+p_load(tidyverse, lubridate, scales, ggrepel)
 
 # Assuming your data is in a TSV with column names : startdate, enddate, side, description, category
 # Example structure:
@@ -8,7 +8,7 @@ p_load(ggplot2, dplyr, lubridate, scales, ggrepel)
 # 2024-01-09  2024-01-10  left  Enseigner un atelier Plots with R (Biologie)  Workshop
 
 # Read data
-timeline_data <- read_tsv("/Users/jorondo/Library/CloudStorage/OneDrive-FreigegebeneBibliotheken–USherbrooke/Isabelle\ Laforest-Lapointe\ -\ RONDEAU_LECLAIRE_Jonathan/Memoire/Comite/timeline.txt") %>%
+timeline_data <- read_tsv(url("https://raw.githubusercontent.com/jorondo1/misc_scripts/refs/heads/main/timeline/timeline_template.txt")) %>%
   mutate(
     description = stringr::str_wrap(description, width = 40),
     
@@ -190,5 +190,5 @@ ggplot(timeline_data) +
     )
   ) + labs(color = '') 
 
-ggsave('Out/comite2/timeline.png', bg = 'white', width = 1600, height = 2200, 
+ggsave('./timeline.png', bg = 'white', width = 1600, height = 2200, 
        units = 'px', dpi = 200)
