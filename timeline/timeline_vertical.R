@@ -7,14 +7,17 @@ p_load(tidyverse, lubridate, scales, ggrepel, magrittr)
 # 2024-01-01  2024-04-30  left  Démonstrateur BIO106 (TPs)  Teaching
 # 2024-01-09  2024-01-10  left  Enseigner un atelier Plots with R (Biologie)  Workshop
 
-# Read data
+############################
+#======= DATA PREP ========#
+############################
+
 timeline_data <- read_tsv(url("https://raw.githubusercontent.com/jorondo1/misc_scripts/refs/heads/main/timeline/timeline_template.txt")) %>%
   mutate(
     description = stringr::str_wrap(description, width = 40),
     
     startdate = as.Date(startdate),
     enddate = as.Date(enddate),
-    # Create midpoint for labeling
+    # Create midpoint for labelling
     midpoint = startdate + (enddate - startdate)/2,
     # Convert to numeric for plotting
     date_numeric = as.numeric(startdate),
@@ -24,6 +27,7 @@ timeline_data <- read_tsv(url("https://raw.githubusercontent.com/jorondo1/misc_s
     event_type = ifelse(duration <= 2, "Point", "Interval")
   ) 
 
+# Define your colour categories
 category.lvls = c(
   'Milestones' = "#a40000",
   'Conférence' = "#da7901",
@@ -32,11 +36,10 @@ category.lvls = c(
   'Présentations orales' = "#00b7a7",
   'Autre' = "#b86092")
 
+# Reorder factor in the order above:
 timeline_data %<>% 
   mutate(category = factor(category,
                            levels = names(category.lvls)))
-
-bracketsize = 0.2
 
 # Dummy data for unified legend
 dummy_legend <- data.frame(
@@ -46,6 +49,23 @@ dummy_legend <- data.frame(
   label = ""  # Empty labels
 )
 
+########################
+#======= SETUP ========#
+########################
+
+bracket_linewidth = 0.2 # thickness of bracket for interval-type events
+dash_linewidth = 0.2 # thickness of dash lines
+bracket_buffer = 0.1 # how far the bracket tips are from  central line
+bracket_height = 0.2 # horizontal height of the brackets
+text_position = 0.5 # relative to central line
+point_buffer = 0.2 # point-event distance from central line
+bracket_xend = bracket_buffer + bracket_height # position of bracket tine root
+description_fontsize = 3.2
+text_nudge = 0.2 # how far the description text is from the tip of the dashed line.
+
+#######################
+#======= PLOT ========#
+#######################
 
 ggplot(timeline_data) +
   
@@ -60,107 +80,111 @@ ggplot(timeline_data) +
   # Add year markers
   geom_text(data = distinct(timeline_data, year = year(startdate)) %>%
               mutate(year_start = as.Date(paste0(year, "-01-15"))),  # Position in mid-January
-            aes(x = 0, y = year_start-24, label = year),
+            aes(x = 0, y = year_start-24, label = year), # manually position the year label
             size = 3.5, fontface = "bold", 
             color = "gray30") +
   
   # Add month markers
   annotate("text", x = 0, 
-           y = seq(min(timeline_data$startdate), max(timeline_data$enddate)+20, by = "1 month"),
-           label = format(seq(min(timeline_data$startdate), max(timeline_data$enddate)+20, by = "1 month"), "%b"),
+           y = seq(min(timeline_data$startdate), 
+                   max(timeline_data$enddate)+20, # 20 buffer to add the last months
+                   by = "1 month"),
+           label = format(seq(min(timeline_data$startdate), 
+                              max(timeline_data$enddate)+20, 
+                              by = "1 month"), "%b"),
            size = 2.8, color = "gray40",
            ) +
   
+  # INTERVAL EVENTS - LEFT SIDE
   
-  # Interval events - left side
   ## Lower horizontal segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "left"),
-               aes(x = -0.1, xend = -0.3, 
+               aes(x = -bracket_buffer, xend = -bracket_xend, # 
                    y = startdate, yend = startdate,
                    color = category),
-               size = bracketsize) +
+               size = bracket_linewidth) +
   ## Upper horizontal segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "left"),
-               aes(x = -0.1, xend = -0.3, 
+               aes(x = -bracket_buffer, xend = -bracket_xend, 
                    y = enddate, yend = enddate,
                    color = category),
-               size = bracketsize) +
+               size = bracket_linewidth) +
   ## Vertical segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "left"),
-               aes(x = -0.3, xend = -0.3, 
+               aes(x = -bracket_xend, xend = -bracket_xend, 
                    y = startdate, yend = enddate,
                    color = category),
-               size = bracketsize) +
+               size = bracket_linewidth) +
   ## Dashed line to event desc
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "left"),
-               aes(x = -0.3, xend = -0.5,
+               aes(x = -bracket_xend, xend = -text_position,
                    y = midpoint, yend = midpoint,
-                   color = category),
-               size = bracketsize, linetype = "dotted") +
+                   color = category), 
+               size = bracket_linewidth, linetype = "dotted") +
   
   # Interval events - right side
   ## Lower horizontal segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "right"),
-               aes(x = 0.1, xend = 0.3, 
+               aes(x = bracket_buffer, xend = bracket_xend, 
                    y = startdate, yend = startdate,
                    color = category),
-               size = bracketsize) +
+               size = bracket_linewidth) +
   ## Upper horizontal segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "right"),
-               aes(x = 0.1, xend = 0.3, 
+               aes(x = bracket_buffer, xend = bracket_xend, 
                    y = enddate, yend = enddate,
                    color = category),
-               size = bracketsize) +
+               size = bracket_linewidth) +
   ## Vertical segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "right"),
-               aes(x = 0.3, xend = 0.3, 
+               aes(x = bracket_xend, xend = bracket_xend, 
                    y = startdate, yend = enddate,
                    color = category),
-               size = bracketsize) +
+               size = bracket_linewidth) +
   ## Dashed line to event desc
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "right"),
-               aes(x = 0.3, xend = 0.5,
+               aes(x = bracket_xend, xend = text_position,
                    y = midpoint, yend = midpoint,
                    color = category),
-               size = bracketsize, linetype = "dotted") +
+               size = bracket_linewidth, linetype = "dotted") +
   
   # Point events - both sides (modified version)
   geom_point(data = filter(timeline_data, event_type == "Point"),
-             aes(x = ifelse(side == "left", -0.2, 0.2), 
+             aes(x = ifelse(side == "left", -point_buffer, point_buffer), 
                  y = startdate, 
                  color = category),
              size = 1, shape = 8) +
   
   geom_segment(data = filter(timeline_data, event_type == "Point"),
-               aes(x = ifelse(side == "left", -0.2, 0.2),
-                   xend = ifelse(side == "left", -0.5, 0.5),
+               aes(x = ifelse(side == "left", -point_buffer, point_buffer),
+                   xend = ifelse(side == "left", -text_position, text_position),
                    y = startdate,
                    yend = startdate,
                    color = category),
-               size = 0.2, linetype = "dotted") +
+               size = dash_linewidth, linetype = "dotted") +
   
   # Labels with smart positioning
   geom_text_repel(data = filter(timeline_data, side == "left"),
-                  aes(x = -0.5, y = midpoint, 
+                  aes(x = -text_position, y = midpoint, 
                       label = description, color = category),
-                  size = 3.2, 
+                  size = description_fontsize, 
                   hjust = 1, 
                   direction = "y",
-                  nudge_x = -0.1, 
+                  nudge_x = -text_nudge, 
                   segment.linetype = 'dotted',
-                  segment.size = 0.2,
-                  max.iter = 1000) +
+                  segment.size = dash_linewidth,
+                  max.iter = 100) +
   
   geom_text_repel(data = filter(timeline_data, side == "right"),
-                  aes(x = 0.5, y = midpoint, 
+                  aes(x = text_position, y = midpoint, 
                       label = description, color = category),
-                  size = 3.2, 
+                  size = description_fontsize, 
                   hjust = 0, 
                   direction = "y",
-                  nudge_x = 0.1, 
-                  segment.size = 0.2,
+                  nudge_x = text_nudge, 
+                  segment.size = dash_linewidth,
                   segment.linetype = 'dotted',
-                  max.iter = 1000) +
+                  max.iter = 100) +
   theme_minimal() +
   
   # Visual styling
