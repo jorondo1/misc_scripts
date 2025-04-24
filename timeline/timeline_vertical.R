@@ -95,60 +95,68 @@ ggplot(timeline_data) +
            size = 2.8, color = "gray40",
            ) +
   
-  # INTERVAL EVENTS - LEFT SIDE
+  # === INTERVAL EVENTS - LEFT SIDE
   
-  ## Lower horizontal segment
+  # Lower horizontal segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "left"),
-               aes(x = -bracket_buffer, xend = -bracket_xend, # 
+               aes(x = -bracket_buffer, xend = -bracket_xend,
                    y = startdate, yend = startdate,
                    color = category),
                size = bracket_linewidth) +
-  ## Upper horizontal segment
+  
+  # Upper horizontal segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "left"),
                aes(x = -bracket_buffer, xend = -bracket_xend, 
                    y = enddate, yend = enddate,
                    color = category),
                size = bracket_linewidth) +
-  ## Vertical segment
+  
+  # Vertical segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "left"),
                aes(x = -bracket_xend, xend = -bracket_xend, 
                    y = startdate, yend = enddate,
                    color = category),
                size = bracket_linewidth) +
-  ## Dashed line to event desc
+  
+  # Dashed line to event desc
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "left"),
                aes(x = -bracket_xend, xend = -text_position,
                    y = midpoint, yend = midpoint,
                    color = category), 
                size = bracket_linewidth, linetype = "dotted") +
   
-  # Interval events - right side
-  ## Lower horizontal segment
+  # === INTERVAL EVENTS - LEFT SIDE
+  
+  # Lower horizontal segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "right"),
                aes(x = bracket_buffer, xend = bracket_xend, 
                    y = startdate, yend = startdate,
                    color = category),
                size = bracket_linewidth) +
-  ## Upper horizontal segment
+  
+  # Upper horizontal segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "right"),
                aes(x = bracket_buffer, xend = bracket_xend, 
                    y = enddate, yend = enddate,
                    color = category),
                size = bracket_linewidth) +
-  ## Vertical segment
+  
+  # Vertical segment
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "right"),
                aes(x = bracket_xend, xend = bracket_xend, 
                    y = startdate, yend = enddate,
                    color = category),
                size = bracket_linewidth) +
-  ## Dashed line to event desc
+  
+  # Dashed line to event desc
   geom_segment(data = filter(timeline_data, event_type == "Interval", side == "right"),
                aes(x = bracket_xend, xend = text_position,
                    y = midpoint, yend = midpoint,
                    color = category),
                size = bracket_linewidth, linetype = "dotted") +
   
-  # Point events - both sides (modified version)
+  # === POINT EVENTS (both sides)
+  
   geom_point(data = filter(timeline_data, event_type == "Point"),
              aes(x = ifelse(side == "left", -point_buffer, point_buffer), 
                  y = startdate, 
@@ -163,13 +171,13 @@ ggplot(timeline_data) +
                    color = category),
                size = dash_linewidth, linetype = "dotted") +
   
-  # Labels with smart positioning
+  # === DESCRIPTION LABELS + SMART POSITIONING
+  
   geom_text_repel(data = filter(timeline_data, side == "left"),
                   aes(x = -text_position, y = midpoint, 
                       label = description, color = category),
                   size = description_fontsize, 
                   hjust = 1, 
-                  direction = "y",
                   nudge_x = -text_nudge, 
                   segment.linetype = 'dotted',
                   segment.size = dash_linewidth,
@@ -180,12 +188,11 @@ ggplot(timeline_data) +
                       label = description, color = category),
                   size = description_fontsize, 
                   hjust = 0, 
-                  direction = "y",
                   nudge_x = text_nudge, 
                   segment.size = dash_linewidth,
                   segment.linetype = 'dotted',
                   max.iter = 100) +
-  theme_minimal() +
+  theme_void() +
   
   # Visual styling
   scale_x_continuous(limits = c(-2, 2)) +
@@ -193,11 +200,7 @@ ggplot(timeline_data) +
                labels = function(x) format(x, "%b"),  # Just 3-letter month abbreviations
                expand = expansion(add = c(30, 30))) +
   theme(
-    axis.title = element_blank(),
-    axis.text.y = element_blank(),
-    axis.text = element_text(size = 12, angle = 90, vjust = 0.5),
-    axis.text.x = element_blank(),
-    panel.grid = element_blank(),
+    axis.text = element_blank(),
     legend.position = "bottom",
     legend.spacing.x = unit(5, "pt"),
     legend.text = element_text(size = 10)
