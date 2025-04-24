@@ -1,5 +1,5 @@
 library(pacman)
-p_load(tidyverse, lubridate, scales, ggrepel)
+p_load(tidyverse, lubridate, scales, ggrepel, magrittr)
 
 # Assuming your data is in a TSV with column names : startdate, enddate, side, description, category
 # Example structure:
@@ -190,5 +190,5 @@ ggplot(timeline_data) +
     )
   ) + labs(color = '') 
 
-ggsave('./timeline.png', bg = 'white', width = 1600, height = 2200, 
-       units = 'px', dpi = 200)
+ggsave('~/Repos/misc_scripts/timeline/timeline_example.png', bg = 'white', width = 1600, height = 2200, 
+       units = 'px', dpi = 220)
