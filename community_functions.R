@@ -57,7 +57,7 @@ parse_genbank_lineages <- function(file) {
 species_glom <- function(abundTable) {
   abundTable %>% 
     group_by(Kingdom, Phylum, Class, Order, Family, Genus, Species) %>% #keep those
-    dplyr::summarise(across(where(is.numeric), sum, na.rm = TRUE),  # Sum the sample abundance columns
+    dplyr::summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)),  # Sum the sample abundance columns
               .groups = "drop")     
 }
 
@@ -201,8 +201,8 @@ compute_pcoa <- function(ps, dist) {
     stop(paste("The provided phyloseq object does not contain a tree.", dist, "requires a reference tree."))
   } 
   
-  vst <- ifelse(dist == 'bray', TRUE, FALSE) 
-
+  #vst <- ifelse(dist == 'bray', TRUE, FALSE) # Edge case where this imploded the pcoa! PD dataset with metaphlan2022 data
+  vst <- FALSE
   dist.mx <- if (dist == 'unifrac.w') {
        UniFrac(ps, weighted = TRUE, parallel = TRUE)
      } else if (dist == 'unifrac.u') {
