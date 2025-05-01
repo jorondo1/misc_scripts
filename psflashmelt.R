@@ -54,8 +54,7 @@ psflashmelt <- function(physeq) {
   # Convert to long format using tidyverse approach
   mdf <- as(otutab, "matrix") %>%
     tibble::as_tibble(rownames = "OTU") %>%
-    tidyr::pivot_longer(cols = -OTU, names_to = "Sample", values_to = "Abundance") %>%
-    dplyr::filter(Abundance > 0)
+    tidyr::pivot_longer(cols = -OTU, names_to = "Sample", values_to = "Abundance") 
   
   # Sample data merge
   if (!is.null(sampleVars)) {
