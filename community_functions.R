@@ -183,7 +183,9 @@ vst_ps_to_mx <- function(ps) {
 # 1. the phyloseq sample_data with 2 first PCo added
 # 2. the eigenvalues
 # 3. the distance/dissimilarity matrix
-compute_pcoa <- function(ps, dist) {
+compute_pcoa <- function(ps, dist, 
+                         vst = FALSE # add variance-stabilizing transformation
+                         ) {
   require(DESeq2)
   require(phyloseq)
   require(vegan)
@@ -199,10 +201,8 @@ compute_pcoa <- function(ps, dist) {
   # Validate tree if distance is UniFrac
   if (dist %in% unifrac_names & is.null(phy_tree(ps, errorIfNULL = FALSE))) {
     stop(paste("The provided phyloseq object does not contain a tree.", dist, "requires a reference tree."))
-  } 
+  }
   
-  #vst <- ifelse(dist == 'bray', TRUE, FALSE) # Edge case where this imploded the pcoa! PD dataset with metaphlan2022 data
-  vst <- FALSE
   dist.mx <- if (dist == 'unifrac.w') {
        UniFrac(ps, weighted = TRUE, parallel = TRUE)
      } else if (dist == 'unifrac.u') {
