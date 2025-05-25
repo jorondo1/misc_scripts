@@ -4,6 +4,7 @@
 # Creates a much smaller table because it omits every row for which Abundance == 0
 
 psflashmelt <- function(physeq) {
+  require(tibble)
   if (!requireNamespace("data.table", quietly = TRUE)) {
     stop("Package 'data.table' needed for this function. Please install it.")
   }
@@ -77,5 +78,5 @@ psflashmelt <- function(physeq) {
   }
   
   mdf <- dplyr::arrange(mdf, desc(Abundance))
-  return(as.data.frame(mdf))
+  return(tibble::as_tibble(mdf))
 }
