@@ -293,11 +293,18 @@ div.fun <- function(ps, idx) {
 
 # Get a phyloseq object's sample data as tibble
 # Creates a Sample column with the sample names
-samdat_as_tibble <- function(ps){
+samdat_as_tibble <- function(ps, strings_as_factors = TRUE){
   sample_data(ps) %>% 
     data.frame %>% 
     rownames_to_column('Sample') %>% 
-    tibble
+    tibble() %>% 
+    {
+      if (strings_as_factors) {
+        dplyr::mutate(., dplyr::across(where(is.character), as.factor))
+      } else {
+        .
+      }
+    }
 }
 
 # Find top taxa at a given rank within a ps object
