@@ -28,8 +28,8 @@ parse_SM <- function(gather_files) {
       tidyr::pivot_wider(names_from = run,
                   values_from = uniqueK) %>% 
       replace(is.na(.), 0) %>% 
-      mutate(genome = genome %>% str_remove("^.*_") %>%  # Remove everything up to and including _
-               str_remove("\\..*$")) %>% 
+      filter(!str_detect(genome, 'plasmid')) %>% 
+      mutate(genome = str_extract(genome, "(?<=_)[^.]*(?=\\.)")) %>% # Remove everything between first _ and first .
       arrange(genome) %>% 
       dplyr::mutate(across(where(is.numeric), \(x) round(x, digits=0)))
 }
@@ -91,12 +91,18 @@ read_filename <- function(filepath, column_names = default_colnames,
 
 parse_MPA <- function(MPA_files, # path with wildcard to point to all files
                       column_names = default_colnames,
-                      convert_to_counts = FALSE){ 
+                      convert_to_counts = FALSE,
+                      mOTUs_data = FALSE){ 
   Sys.glob(MPA_files) %>% 
     map(read_filename, column_names, convert_to_counts) %>% #compact %>% 
-    list_rbind %>% tibble %>%  # Keep only lines with species, remove duplicates at strain level
+    list_rbind() %>% tibble() %>%  # Keep only lines with species, remove duplicates at strain level
     dplyr::filter(str_detect(Taxonomy, "s__") & 
                     !str_detect(Taxonomy,"t__")) %>% 
+    { # mOTUs has multiple mOTUs per "Species" id because unknown Species are called incertae sedis
+      if (mOTUs_data) { # So we add the mOTU identifier, which represents a distinc species
+        mutate(., Taxonomy = paste(Taxonomy, mOTU))
+      } else { . } 
+      } %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     dplyr::mutate(Abundance = as.double(Abundance)) %>% 
     group_by(Taxonomy, sample) %>% 
