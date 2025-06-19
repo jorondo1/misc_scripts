@@ -95,9 +95,9 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
                       mOTUs_data = FALSE){ 
   Sys.glob(MPA_files) %>% 
     map(read_filename, column_names, convert_to_counts) %>% #compact %>% 
-    list_rbind() %>% tibble() %>%  # Keep only lines with species, remove duplicates at strain level
-    dplyr::filter(str_detect(Taxonomy, "s__") & 
-                    !str_detect(Taxonomy,"t__")) %>% 
+    list_rbind() %>% tibble() %>%  # Keep only lines with species, remove duplicates at strain (or SGB) level
+    dplyr::filter(str_detect(Taxonomy, "s__") & # but drop the SGB identifiers:
+                    !str_detect(Taxonomy,"t__")) %>% # So far I think SGBs identifiers are as distinct as Species identifiers...
     { # mOTUs has multiple mOTUs per "Species" id because unknown Species are called incertae sedis
       if (mOTUs_data) { # So we add the mOTU identifier, which represents a distinc species
         mutate(., Taxonomy = paste(Taxonomy, mOTU))
@@ -105,7 +105,7 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
       } %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>% 
     dplyr::mutate(Abundance = as.double(Abundance)) %>% 
-    group_by(Taxonomy, sample) %>% 
+    group_by(Taxonomy, sample) %>% # Compute abundance by Species
     dplyr::summarise(Abundance = sum(Abundance), .groups='drop') %>% # sum strains into species if applicable
     tidyr::pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
     dplyr::mutate(
