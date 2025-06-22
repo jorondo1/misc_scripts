@@ -33,7 +33,7 @@ Once you are logged in, *you must* run the following command, each and every tim
 
 	newgrp def-ilafores
 	
-Otherwise, any file you create will only be readable and writable by you.
+Otherwise, any file you create will only be readable and writable by you. * Do not add the newgrp command to your bashrc, tempting as it may be *
 
 ## 3. Initial setup (ip34)
 _You'll only need to do this once, ever._ It will add a few lines to your `.bashrc` file, which is executed every time you login. 
