@@ -66,7 +66,8 @@ And you can start doing science!
 If you need extra juice to run a massive DADA2 pipeline your laptop can't handle, for example, you can load the R environment within ip34. First, on ip34, use shared R libraries from the Laforest group: `echo export R_LIBS="/home/def-ilafores" >> ~/.bashrc`. Then, load R and activate it.
 
 	module load StdEnv/2023 r/4.4.0 mugqic/cutadapt/2.10
-	R
+	nice R
+NOTE:  nice is optional, but recommended so your program is "nice to others" who use the same resources (so you don't hoard all the cores in ip34)
 
 Once you run this, you are now in the equivalent of an R console, which accepts R commands (don't write bash!). The `>` at the beginning of a new line expects commands in the R language. You'll need to install the packages you need (only once), as you once did on your computer. By default, your current directory will be the one you were in when you activated R. 
 
