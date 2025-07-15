@@ -56,9 +56,14 @@ tax_glom2 <- function(ps, taxrank) {
   if (!taxrank %in% rank_names(ps)) {
     stop("Invalid taxrank. Must be one of rank_names(ps).")
   }
-  
+  if(taxa_are_rows(ps)) {
+    otuTable <- otu_table(ps)
+  } else {
+    otuTable <- t(otu_table(ps))
+    
+  }
   # Melt the OTU table to long format
-  otu_long <- otu_table(ps) %>% 
+  otu_long <- otuTable %>% 
     data.frame(check.names = FALSE) %>% # avoid sample name modification
     rownames_to_column('OTU') %>% 
     tidyr::pivot_longer(-OTU, names_to = "Sample", values_to = "Abundance")
