@@ -125,11 +125,14 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
 
 # Filtering low prevalence taxa
 filter_low_prevalence <- function(ps, minPrev = 0.05, minAbund = 0.0001) {
+  
+  if(taxa_are_rows(ps)) {Margin <- c(1,2)} else {Margin <- c(2,1) }
+  
   # Taxa prevalence
-  prev <- apply(otu_table(ps), 1, function(x) sum(x > 0)) / nsamples(ps)
+  prev <- apply(otu_table(ps), Margin[1], function(x) sum(x > 0)) / nsamples(ps)
   
   # Convert to relative abundance
-  rel_abund <- apply(otu_table(ps), 2, function(x) x / sum(x))
+  rel_abund <- apply(otu_table(ps), Margin[2], function(x) x / sum(x))
   
   # Keep taxa with prevalence above threshold
   keepTaxa <- names(prev[prev >= minPrev & apply(rel_abund, 1, max) >= minAbund])
