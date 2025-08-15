@@ -96,3 +96,33 @@ prune_contam <- function(ps, decontam_table) {
   
   return(ps_clean)
 }
+
+# EXAMPLE USAGE
+# # First, filter the taxonomy table:
+# taxa_filtered <- subset_asvs(
+#   taxonomy = tax_table, 
+#   sextab = seqtab.nochim, 
+#   min_seq = 50
+# )  # minimum amount of sequences to keep an asv; this creates a new taxonomy table!
+# 
+# # visualise the histogram of sequencing depth
+# viz_seqdepth(taxa_filtered) # use this to visually decide which low-depth samples to discard
+# 
+# # Filter the sequence table by (1) removing the taxa we filtered out using subset_asvs(), then (2) remove samples lower than what you decided with the histogram:
+# seqtab_filtered <- remove_ultra_rare(
+#   seqtab = seqtab.nochim, 
+#   taxonomy = taxa_filtered, 
+#   n = 9000 # Choose a number here by checking the histogram above!
+# )
+# 
+# # Check what you've lost:
+# dim(seqtab.nochim) # initial table
+# dim(seqtab_filtered) # filtered table
+# sum(seqtab_filtered)/sum(seqtab.nochim) # percentage of sequences left
+# 
+# # Create a phyloseq object:
+# ps_16S <- phyloseq(
+#   tax_table(tax_table),
+#   otu_table(seqtab_filtered, taxa_are_rows = FALSE),
+#   sample_data(your_metadata_file) # make sure sample names are consistent and in the row names 
+# ) 
