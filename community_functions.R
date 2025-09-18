@@ -252,6 +252,27 @@ compute_pcoa <- function(ps, dist,
   list(metadata = out, eig = PCoA$CA$eig, dist.mx = dist.mx)
 }
 
+
+# Pivot a dist object to a long dataframe
+# Possible to use only a subset of samples, provided their name
+compile_dist_pairs <- function(dist.mx, sample_subset = NULL) {
+  
+  dist_matrix <- as.matrix(dist.mx)
+  
+  if (!is.null(sample_subset)) {
+    dist_matrix <- dist_matrix[sample_subset,sample_subset]
+  }
+  
+  upper_indices <- which(upper.tri(dist_matrix), arr.ind = TRUE)
+  
+  data.frame(
+    Sample1 = rownames(dist_matrix)[upper_indices[, 1]],
+    Sample2 = colnames(dist_matrix)[upper_indices[, 2]],
+    Distance = dist_matrix[upper_indices]
+  )
+}
+
+
 ################
 ### DIVERSITY ###
 ################
