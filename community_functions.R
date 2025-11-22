@@ -35,9 +35,9 @@ parse_SM <- function(gather_files) {
 }
 
 # To parse the gtdb taxonomy 
-parse_GTDB_lineages <- function(file, colnames) {
+parse_GTDB_lineages <- function(file, colnames = c('genome','rep','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')) {
   read_delim(file, show_col_types = FALSE,
-             col_names = c('genome','rep','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')) %>% 
+             col_names = colnames) %>% 
 #    mutate(genome = str_remove(genome, "^[^_]*_")) %>% 
     mutate_all(~str_remove(., "^[A-Za-z]_+")) %>% 
     mutate(genome = genome %>% str_remove("^.*_") %>%  # Remove everything up to and including _
