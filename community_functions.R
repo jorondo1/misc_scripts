@@ -44,9 +44,9 @@ parse_GTDB_lineages <- function(file, colnames = c('genome','rep','Kingdom', 'Ph
              str_remove("\\..*$"))
 }
 
-parse_genbank_lineages <- function(file) {
+parse_genbank_lineages <- function(file, colnames = c('ident','taxid','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species','Strain')) {
   read_delim(file, show_col_types = FALSE, 
-             col_names = c('ident','taxid','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species','Strain')) %>% 
+             col_names = colnames) %>% 
     dplyr::select(-taxid) %>% 
     dplyr::mutate(genome = ident, .keep = 'unused') %>% 
     mutate_all(~str_remove(., "^[A-Za-z]_+")) %>% 
@@ -142,7 +142,8 @@ filter_low_prevalence <- function(ps, minPrev = 0.05, minAbund = 0.0001) {
 }
 
 assemble_phyloseq <- function(abunTable, sampleData, filtering = FALSE, justBacteria = TRUE) {
-  
+  require('phyloseq')
+  # Cleanup the taxonomy
   abunTable %<>% 
     {if(justBacteria) (.) %>% dplyr::filter(Kingdom %in% c("Bacteria","Archaea") | is.na(Kingdom)) else .} %>%
     mutate(across(where(is.character), \(x) {
@@ -172,6 +173,7 @@ assemble_phyloseq <- function(abunTable, sampleData, filtering = FALSE, justBact
   
   if (length(keep_samples)==0) {
     return(NULL)
+    message('no samples left')
   } else {
     sampleData_subset <- sampleData[keep_samples,, drop = FALSE] 
     
@@ -180,7 +182,7 @@ assemble_phyloseq <- function(abunTable, sampleData, filtering = FALSE, justBact
                    sample_data(sampleData_subset),
                    tax_table(tax)
     ) %>% 
-      (if (filtering) filter_low_prevalence else identity)
+      (if (filtering) filter_low_prevalence() else identity)
     
     prune_samples(sample_sums(ps) > 0, ps) %>%  #remove any empty samples 
       prune_taxa(taxa_sums(.) > 0,.) # remove taxa absent from all (may happen if you end up using not all the samples you parse, e.g. metadata missing so sample dropped in the process)
