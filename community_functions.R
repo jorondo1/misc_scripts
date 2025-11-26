@@ -85,7 +85,7 @@ read_filename <- function(filepath, column_names = default_colnames,
     read.table(sep = '\t', header = FALSE, col.names=column_names, 
                quote = "", colClasses = 'character' # otherwise EOF error
                ) %>%
-    dplyr::mutate(sample = basename(filepath) %>% str_replace('_.*', ""),
+    dplyr::mutate(sample = basename(filepath) %>% str_replace('_profile.txt', ""),
            Abundance = round(as.numeric(Abundance)*scale_reads),0)
 }
 
@@ -95,7 +95,8 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
                       mOTUs_data = FALSE){ 
   Sys.glob(MPA_files) %>% 
     map(read_filename, column_names, convert_to_counts) %>% #compact %>% 
-    list_rbind() %>% tibble() %>%  # Keep only lines with species, remove duplicates at strain (or SGB) level
+    list_rbind() %>% 
+    tibble() %>%  # Keep only lines with species, remove duplicates at strain (or SGB) level
     dplyr::filter(str_detect(Taxonomy, "s__") & # but drop the SGB identifiers:
                     !str_detect(Taxonomy,"t__")) %>% # So far I think SGBs identifiers are as distinct as Species identifiers...
     { # mOTUs has multiple mOTUs per "Species" id because unknown Species are called incertae sedis
@@ -165,7 +166,7 @@ assemble_phyloseq <- function(abunTable, sampleData, filtering = FALSE, justBact
     dplyr::select(where(is.character)) %>% 
     unique %>% # because of renaming above, some species will be duplicate
     mutate(Species2 = Species) %>% 
-    column_to_rownames('Species2') %>% as.matrix
+    column_to_rownames('Species2') %>% as.matrix()
   
   # Some datasets may end up with very low read counts and lose samples.
   # We subset the sample dataset, but we add a check if all samples are lost:
