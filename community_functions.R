@@ -81,7 +81,7 @@ read_filename <- function(filepath, column_names = default_colnames,
     #headers <- grep("#clade_name", raw, value = TRUE)
   raw %>% 
     grep("^[^#]", ., value = TRUE) %>% # discard header lines
-    textConnection %>% # create connection to chr vector, enables file-reading fun for in-memory strings
+    textConnection() %>% # create connection to chr vector, enables file-reading fun for in-memory strings
     read.table(sep = '\t', header = FALSE, col.names=column_names, 
                quote = "", colClasses = 'character' # otherwise EOF error
                ) %>%
@@ -94,7 +94,7 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
                       convert_to_counts = FALSE,
                       mOTUs_data = FALSE){ 
   Sys.glob(MPA_files) %>% 
-    map(read_filename, column_names, convert_to_counts) %>% #compact %>% 
+    map(read_filename, column_names, convert_to_counts) %>% 
     list_rbind() %>% 
     tibble() %>%  # Keep only lines with species, remove duplicates at strain (or SGB) level
     dplyr::filter(str_detect(Taxonomy, "s__") & # but drop the SGB identifiers:
