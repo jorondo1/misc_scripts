@@ -1,5 +1,10 @@
 # PHYLOSEQ FUNCTIONS
 
+### Functions 
+source(url("https://raw.githubusercontent.com/jorondo1/misc_scripts/refs/heads/main/psflashmelt.R"))
+source(url("https://raw.githubusercontent.com/jorondo1/misc_scripts/refs/heads/main/rarefy_even_depth2.R"))
+source(url("https://raw.githubusercontent.com/jorondo1/misc_scripts/refs/heads/main/rarecurve_parallel.R"))
+
 ###############
 # Functions ####
 #################
