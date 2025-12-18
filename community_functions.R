@@ -2,7 +2,17 @@
 ### Parse Sourmash output ###
 ##############################
 
-print('assemble_phyloseq() is now available via')
+print('The following functions:' )
+print('vst_ps_to_mx(),
+compute_pcoa(),
+compile_dist_pairs(),
+estimate_diversity(),
+topTaxa(),
+estimate_Hill(),
+div.fun(),
+assemble_phyloseq()
+      ')
+print('must be loaded via')
 print('https://github.com/jorondo1/mgx.tools')
 
 # handle cases of older sourmash versions where the variable was "name"
@@ -200,87 +210,87 @@ filter_low_prevalence <- function(ps, minPrev = 0.05, minAbund = 0.0001) {
 ######## Distance-based analyses ###
 #####################################
 
-# Variance-stabilizing transformation
-vst_ps_to_mx <- function(ps) {
-  phyloseq_to_deseq2(
-    ps, ~ 1) %>% # DESeq2 object
-    estimateSizeFactors(., geoMeans = apply(
-      counts(.), 1, function(x) exp(sum(log(x[x>0]))/length(x)))) %>%
-    DESeq2::varianceStabilizingTransformation(blind=T) %>% # VST
-    SummarizedExperiment::assay(.) %>% t %>%
-    { .[. < 0] <- 0; . } # replace negatives by zeros
-}
-
-# PCOA
-# Return a list of 3 elements :
-# 1. the phyloseq sample_data with 2 first PCo added
-# 2. the eigenvalues
-# 3. the distance/dissimilarity matrix
-compute_pcoa <- function(ps, dist,
-                         vst = FALSE # add variance-stabilizing transformation
-                         ) {
-  # +++++++ INTEGRATED mgx.tools
-
-  require(DESeq2)
-  require(phyloseq)
-  require(vegan)
-  require(dplyr)
-
-  # Validate distance
-  unifrac_names <- c("unifrac.u","unifrac.w")
-  dist_list <- c(unifrac_names,"manhattan", "euclidean", "canberra", "clark", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup", "binomial", "chao", "cao", "mahalanobis", "chisq", "chord", "hellinger", "aitchison", "robust.aitchison")
-  if (!dist %in% dist_list) {
-    stop(paste(c("Distance must be one of the following:", dist_list), collapse = ", "))
-  }
-
-  # Validate tree if distance is UniFrac
-  if (dist %in% unifrac_names & is.null(phy_tree(ps, errorIfNULL = FALSE))) {
-    stop(paste("The provided phyloseq object does not contain a tree.", dist, "requires a reference tree."))
-  }
-
-  dist.mx <- if (dist == 'unifrac.w') {
-       UniFrac(ps, weighted = TRUE, parallel = TRUE)
-     } else if (dist == 'unifrac.u') {
-       UniFrac(ps, weighted = FALSE, parallel = TRUE)
-     } else {
-       ps %>%
-      {
-        counts <- if (vst) vst_ps_to_mx(.) else otu_table(.)
-        if (taxa_are_rows(ps) & !vst) t(counts) else counts
-      } %>%
-      vegan::vegdist(method = dist)
-  }
-
-  PCoA <- capscale(dist.mx~1, distance = dist)
-  eig <- round(PCoA$CA$eig[1:3]/sum(PCoA$CA$eig),2)
-  message(paste("First 3 PCo :",eig[1], ',', eig[2], ',', eig[3]))
-  # create output list
-  out <- data.frame(sample_data(ps))
-  out$PCo1 <- scores(PCoA)$sites[,1]
-  out$PCo2 <- scores(PCoA)$sites[,2]
-
-  list(metadata = out, eig = PCoA$CA$eig, dist.mx = dist.mx)
-}
-
-
-# Pivot a dist object to a long dataframe
-# Possible to use only a subset of samples, provided their name
-compile_dist_pairs <- function(dist.mx, sample_subset = NULL) {
-
-  dist_matrix <- as.matrix(dist.mx)
-
-  if (!is.null(sample_subset)) {
-    dist_matrix <- dist_matrix[sample_subset,sample_subset]
-  }
-
-  upper_indices <- which(upper.tri(dist_matrix), arr.ind = TRUE)
-
-  data.frame(
-    Sample1 = rownames(dist_matrix)[upper_indices[, 1]],
-    Sample2 = colnames(dist_matrix)[upper_indices[, 2]],
-    Distance = dist_matrix[upper_indices]
-  )
-}
+# # Variance-stabilizing transformation
+# vst_ps_to_mx <- function(ps) {
+#   phyloseq_to_deseq2(
+#     ps, ~ 1) %>% # DESeq2 object
+#     estimateSizeFactors(., geoMeans = apply(
+#       counts(.), 1, function(x) exp(sum(log(x[x>0]))/length(x)))) %>%
+#     DESeq2::varianceStabilizingTransformation(blind=T) %>% # VST
+#     SummarizedExperiment::assay(.) %>% t %>%
+#     { .[. < 0] <- 0; . } # replace negatives by zeros
+# }
+#
+# # PCOA
+# # Return a list of 3 elements :
+# # 1. the phyloseq sample_data with 2 first PCo added
+# # 2. the eigenvalues
+# # 3. the distance/dissimilarity matrix
+# compute_pcoa <- function(ps, dist,
+#                          vst = FALSE # add variance-stabilizing transformation
+#                          ) {
+#   # +++++++ INTEGRATED mgx.tools
+#
+#   require(DESeq2)
+#   require(phyloseq)
+#   require(vegan)
+#   require(dplyr)
+#
+#   # Validate distance
+#   unifrac_names <- c("unifrac.u","unifrac.w")
+#   dist_list <- c(unifrac_names,"manhattan", "euclidean", "canberra", "clark", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup", "binomial", "chao", "cao", "mahalanobis", "chisq", "chord", "hellinger", "aitchison", "robust.aitchison")
+#   if (!dist %in% dist_list) {
+#     stop(paste(c("Distance must be one of the following:", dist_list), collapse = ", "))
+#   }
+#
+#   # Validate tree if distance is UniFrac
+#   if (dist %in% unifrac_names & is.null(phy_tree(ps, errorIfNULL = FALSE))) {
+#     stop(paste("The provided phyloseq object does not contain a tree.", dist, "requires a reference tree."))
+#   }
+#
+#   dist.mx <- if (dist == 'unifrac.w') {
+#        UniFrac(ps, weighted = TRUE, parallel = TRUE)
+#      } else if (dist == 'unifrac.u') {
+#        UniFrac(ps, weighted = FALSE, parallel = TRUE)
+#      } else {
+#        ps %>%
+#       {
+#         counts <- if (vst) vst_ps_to_mx(.) else otu_table(.)
+#         if (taxa_are_rows(ps) & !vst) t(counts) else counts
+#       } %>%
+#       vegan::vegdist(method = dist)
+#   }
+#
+#   PCoA <- capscale(dist.mx~1, distance = dist)
+#   eig <- round(PCoA$CA$eig[1:3]/sum(PCoA$CA$eig),2)
+#   message(paste("First 3 PCo :",eig[1], ',', eig[2], ',', eig[3]))
+#   # create output list
+#   out <- data.frame(sample_data(ps))
+#   out$PCo1 <- scores(PCoA)$sites[,1]
+#   out$PCo2 <- scores(PCoA)$sites[,2]
+#
+#   list(metadata = out, eig = PCoA$CA$eig, dist.mx = dist.mx)
+# }
+#
+#
+# # Pivot a dist object to a long dataframe
+# # Possible to use only a subset of samples, provided their name
+# compile_dist_pairs <- function(dist.mx, sample_subset = NULL) {
+#
+#   dist_matrix <- as.matrix(dist.mx)
+#
+#   if (!is.null(sample_subset)) {
+#     dist_matrix <- dist_matrix[sample_subset,sample_subset]
+#   }
+#
+#   upper_indices <- which(upper.tri(dist_matrix), arr.ind = TRUE)
+#
+#   data.frame(
+#     Sample1 = rownames(dist_matrix)[upper_indices[, 1]],
+#     Sample2 = colnames(dist_matrix)[upper_indices[, 2]],
+#     Distance = dist_matrix[upper_indices]
+#   )
+# }
 
 
 ################
