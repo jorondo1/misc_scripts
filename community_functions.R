@@ -2,18 +2,17 @@
 ### Parse Sourmash output ###
 ##############################
 
-print('The following functions:' )
-print('vst_ps_to_mx(),
+cat('The following functions:' )
+cat(message('vst_ps_to_mx(),
 compute_pcoa(),
 compile_dist_pairs(),
 estimate_diversity(),
 topTaxa(),
 estimate_Hill(),
 div.fun(),
-assemble_phyloseq()
-      ')
-print('must be loaded via')
-print('https://github.com/jorondo1/mgx.tools')
+assemble_phyloseq()'))
+cat('must be loaded via')
+cat('https://github.com/jorondo1/mgx.tools')
 
 # handle cases of older sourmash versions where the variable was "name"
 # instead of "match_name" (introduced through the branchwater approach)
