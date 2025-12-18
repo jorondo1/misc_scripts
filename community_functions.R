@@ -2,7 +2,8 @@
 ### Parse Sourmash output ###
 ##############################
 
-message('assemble_phyloseq() is now available via https://github.com/jorondo1/mgx.tools')
+print('assemble_phyloseq() is now available via')
+print('https://github.com/jorondo1/mgx.tools')
 
 # handle cases of older sourmash versions where the variable was "name"
 # instead of "match_name" (introduced through the branchwater approach)
