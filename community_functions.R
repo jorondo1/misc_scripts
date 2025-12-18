@@ -3,14 +3,7 @@
 ##############################
 
 cat('The following functions:' )
-cat(message('vst_ps_to_mx(),
-compute_pcoa(),
-compile_dist_pairs(),
-estimate_diversity(),
-topTaxa(),
-estimate_Hill(),
-div.fun(),
-assemble_phyloseq()'))
+cat('vst_ps_to_mx(), compute_pcoa(), compile_dist_pairs(), estimate_diversity(), topTaxa(), estimate_Hill(), div.fun(), assemble_phyloseq()'))
 cat('must be loaded via')
 cat('https://github.com/jorondo1/mgx.tools')
 
