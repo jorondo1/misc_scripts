@@ -1,73 +1,73 @@
-# PHYLOSEQ FUNCTIONS
-
-# +++++ these functions are being INTEGRATED in the mgx.tools package
+# # PHYLOSEQ FUNCTIONS
+# 
+# # +++++ these functions are being INTEGRATED in the mgx.tools package
+# # https://github.com/jorondo1/mgx.tools
+# 
+# packaged_message <- "This function is now available in the following package:
 # https://github.com/jorondo1/mgx.tools
-
-packaged_message <- "This function is now available in the following package:
-https://github.com/jorondo1/mgx.tools
-Please install it to use it."
-
-###############################
-# ASV Post-Processing Functions ####
-###############################
-
-# Keep samples with metadata
-subset_samples <- function(seqtab, samples) {
-
-  # ++++++++++++ INTEGRATED mgx.tools
-  message(packaged_message)
-
-
-  # seqtab[rownames(seqtab) %in% samples, ] %>% # subset
-  #   .[, colSums(.) > 0] # Remove ASVs with no hits
-}
-
-# ASVs classified at the kingdom level and present in seqtab
-subset_asvs <- function(taxonomy, seqtab, min_seq) {
-  # ++++++++++++ INTEGRATED mgx.tools
-  message(packaged_message)
-  message('function renamed subset_taxa()')
-  # if (!is.data.frame(taxonomy)) {
-  #   taxonomy <- as.data.frame(taxonomy)
-  # }
-  #
-  # asvs <- subset(taxonomy, Phylum != "Unclassified") %>% # subset needs the input to be a df
-  #   rownames %>%
-  #   intersect(
-  #     colnames(seqtab)[colSums(seqtab) >= min_seq]
-  #   ) # only keep asvs still present in seqtab
-  # taxonomy[asvs, ] %>% as.matrix()
-}
-
-# Remove samples with fewer than n sequences once taxa removed
-remove_ultra_rare <- function(seqtab, taxonomy, n) {
-  # ++++++++++++ INTEGRATED mgx.tools
-  message(packaged_message)
-  # result <- seqtab[, rownames(taxonomy), drop = FALSE]  # Ensure it stays a data frame
-  # result <- result[rowSums(result) > n, , drop = FALSE]  # Filter rows (samples). n = sum across ASVs in a sample
-  # result <- result[,colSums(result) > 1, drop = FALSE] # Remove singleton ASVs
-  # return(result)
-}
-
-# Visualise sequence count distribution across samples
-viz_seqdepth <- function(seqtab) {
-  # ++++++++++++ INTEGRATED mgx.tools
-  message(packaged_message)
-
-  # hist(rowSums(seqtab), breaks = 100,
-  #      xlab = "sample size", xaxt = "n", main = 'Distribution of sequence count per sample')
-  # axis(1, at = pretty(rowSums(seqtab), n = 40))  # adding ticks
-}
-
-# Export ASVs as fasta
-asv_to_fasta <- function(seqtab, path.out) {
-  # ++++++++++++ INTEGRATED mgx.tools
-  message(packaged_message)
-  # seqs <- colnames(seqtab)
-  # fasta <- DNAStringSet(seqs)
-  # names(fasta) <- paste0("ASV_", seq_along(seqs))
-  # writeXStringSet(fasta, path.out)
-}
+# Please install it to use it."
+# 
+# ###############################
+# # ASV Post-Processing Functions ####
+# ###############################
+# 
+# # Keep samples with metadata
+# subset_samples <- function(seqtab, samples) {
+# 
+#   # ++++++++++++ INTEGRATED mgx.tools
+#   message(packaged_message)
+# 
+# 
+#   # seqtab[rownames(seqtab) %in% samples, ] %>% # subset
+#   #   .[, colSums(.) > 0] # Remove ASVs with no hits
+# }
+# 
+# # ASVs classified at the kingdom level and present in seqtab
+# subset_asvs <- function(taxonomy, seqtab, min_seq) {
+#   # ++++++++++++ INTEGRATED mgx.tools
+#   message(packaged_message)
+#   message('function renamed subset_taxa()')
+#   # if (!is.data.frame(taxonomy)) {
+#   #   taxonomy <- as.data.frame(taxonomy)
+#   # }
+#   #
+#   # asvs <- subset(taxonomy, Phylum != "Unclassified") %>% # subset needs the input to be a df
+#   #   rownames %>%
+#   #   intersect(
+#   #     colnames(seqtab)[colSums(seqtab) >= min_seq]
+#   #   ) # only keep asvs still present in seqtab
+#   # taxonomy[asvs, ] %>% as.matrix()
+# }
+# 
+# # Remove samples with fewer than n sequences once taxa removed
+# remove_ultra_rare <- function(seqtab, taxonomy, n) {
+#   # ++++++++++++ INTEGRATED mgx.tools
+#   message(packaged_message)
+#   # result <- seqtab[, rownames(taxonomy), drop = FALSE]  # Ensure it stays a data frame
+#   # result <- result[rowSums(result) > n, , drop = FALSE]  # Filter rows (samples). n = sum across ASVs in a sample
+#   # result <- result[,colSums(result) > 1, drop = FALSE] # Remove singleton ASVs
+#   # return(result)
+# }
+# 
+# # Visualise sequence count distribution across samples
+# viz_seqdepth <- function(seqtab) {
+#   # ++++++++++++ INTEGRATED mgx.tools
+#   message(packaged_message)
+# 
+#   # hist(rowSums(seqtab), breaks = 100,
+#   #      xlab = "sample size", xaxt = "n", main = 'Distribution of sequence count per sample')
+#   # axis(1, at = pretty(rowSums(seqtab), n = 40))  # adding ticks
+# }
+# 
+# # Export ASVs as fasta
+# asv_to_fasta <- function(seqtab, path.out) {
+#   # ++++++++++++ INTEGRATED mgx.tools
+#   message(packaged_message)
+#   # seqs <- colnames(seqtab)
+#   # fasta <- DNAStringSet(seqs)
+#   # names(fasta) <- paste0("ASV_", seq_along(seqs))
+#   # writeXStringSet(fasta, path.out)
+# }
 
 ### DECONTAM
 
@@ -114,26 +114,26 @@ prune_contam <- function(ps, decontam_table) {
                 '% of reads were lost to decontamination.'))
 
   return(ps_clean)
-}
-
-# Get a phyloseq object's sample data as tibble
-# Creates a Sample column with the sample names
-samdat_as_tibble <- function(ps, strings_as_factors = TRUE){
-  # ++++++++++++ INTEGRATED mgx.tools
-  message(packaged_message)
-
-  # sample_data(ps) %>%
-  #   data.frame %>%
-  #   rownames_to_column('Sample') %>%
-  #   tibble() %>%
-  #   {
-  #     if (strings_as_factors) {
-  #       dplyr::mutate(., dplyr::across(where(is.character), as.factor))
-  #     } else {
-  #       .
-  #     }
-  #   }
-}
+ }
+# 
+# # Get a phyloseq object's sample data as tibble
+# # Creates a Sample column with the sample names
+# samdat_as_tibble <- function(ps, strings_as_factors = TRUE){
+#   # ++++++++++++ INTEGRATED mgx.tools
+#   message(packaged_message)
+# 
+#   # sample_data(ps) %>%
+#   #   data.frame %>%
+#   #   rownames_to_column('Sample') %>%
+#   #   tibble() %>%
+#   #   {
+#   #     if (strings_as_factors) {
+#   #       dplyr::mutate(., dplyr::across(where(is.character), as.factor))
+#   #     } else {
+#   #       .
+#   #     }
+#   #   }
+# }
 
 # EXAMPLE USAGE
 # # First, filter the taxonomy table:
