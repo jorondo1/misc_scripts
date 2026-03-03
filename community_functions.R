@@ -19,31 +19,32 @@ genome_col_name_version <- function(df) {
 
 parse_SM <- function(gather_files) {
   gather_data <- Sys.glob(gather_files) %>%
-    map_dfr(read_csv, col_types='ddddddddcccddddcccddcddcddddddd') %>%
+    map_dfr(read_csv, col_types ='ddddddddcccddddcccddcddcddddddd'
+            ) %>%
     dplyr::mutate(
       uniqueK = (unique_intersect_bp/scaled)*average_abund,
       genome = genome_col_name_version(pick(everything())),
       run = str_replace(query_name, "_clean", ""),
       .keep = "unused"
     )
-
-    # Process output and return
-    gather_data %>%
-      dplyr::select(run, uniqueK, genome) %>%
-      tidyr::pivot_wider(names_from = run,
-                  values_from = uniqueK) %>%
-      replace(is.na(.), 0) %>%
-      filter(!str_detect(genome, 'plasmid')) %>%
-      mutate(genome = str_extract(genome, "(?<=_)[^.]*(?=\\.)")) %>% # Remove everything between first _ and first .
-      arrange(genome) %>%
-      dplyr::mutate(across(where(is.numeric), \(x) round(x, digits=0)))
+  
+  # Process output and return
+  gather_data %>%
+    dplyr::select(run, uniqueK, genome) %>%
+    tidyr::pivot_wider(names_from = run,
+                       values_from = uniqueK) %>%
+    replace(is.na(.), 0) %>%
+    filter(!str_detect(genome, 'plasmid')) %>%
+    mutate(genome = str_extract(genome, "(?<=_)[^.]*(?=\\.)")) %>% # Remove everything between first _ and first .
+    arrange(genome) %>%
+    dplyr::mutate(across(where(is.numeric), \(x) round(x, digits=0)))
 }
 
 # To parse the gtdb taxonomy
 parse_GTDB_lineages <- function(file, colnames = c('genome','rep','Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')) {
   read_delim(file, show_col_types = FALSE,
              col_names = colnames) %>%
-#    mutate(genome = str_remove(genome, "^[^_]*_")) %>%
+    #    mutate(genome = str_remove(genome, "^[^_]*_")) %>%
     mutate_all(~str_remove(., "^[A-Za-z]_+")) %>%
     mutate(genome = genome %>% str_remove("^.*_") %>%  # Remove everything up to and including _
              str_remove("\\..*$"))
@@ -57,60 +58,61 @@ parse_genbank_lineages <- function(file, colnames = c('ident','taxid','Kingdom',
     mutate_all(~str_remove(., "^[A-Za-z]_+")) %>%
     mutate(genome = genome %>% str_remove("^.*_") %>%  # Remove everything up to and including _
              str_remove("\\..*$"))
-  }
+}
 
 species_glom <- function(abundTable) {
   abundTable %>%
     group_by(Kingdom, Phylum, Class, Order, Family, Genus, Species) %>% #keep those
     dplyr::summarise(across(where(is.numeric), \(x) sum(x, na.rm = TRUE)),  # Sum the sample abundance columns
-              .groups = "drop")
+                     .groups = "drop")
 }
 
 ##############################
 ### Parse MetaPhlAn output ####
 ################################
 default_colnames <- c('Taxonomy', 'Abundance')
-read_filename <- function(filepath, column_names = default_colnames,
-                          convert_to_counts = FALSE) {
+read_filename <- function(filepath, column_names = default_colnames) {
   raw <- readLines(filepath)
-
-  # MetaPhlan outputs relative abundances, we scale it using the total #reads
-  # Optional, because other tools (Kraken, mOTUs) use the MPA-stye tables but
-  # already output read counts.
-  if (convert_to_counts) {
-    processed <- grep("reads processed", raw, value = TRUE)
-    scale_reads <- as.numeric(gsub("[^0-9]", "", processed))/100
-  } else {
-    scale_reads <- 1
-    }
-    #headers <- grep("#clade_name", raw, value = TRUE)
+  
+  #headers <- grep("#clade_name", raw, value = TRUE)
   raw %>%
     grep("^[^#]", ., value = TRUE) %>% # discard header lines
+    grep("Taxonomy", ., invert = TRUE, value = TRUE) %>% # mOTUs 4 has a header line not preceded by #
+    grep("unassigned", ., invert = TRUE, value = TRUE) %>% 
     textConnection() %>% # create connection to chr vector, enables file-reading fun for in-memory strings
     read.table(sep = '\t', header = FALSE, col.names=column_names,
                quote = "", colClasses = 'character' # otherwise EOF error
-               ) %>%
-    dplyr::mutate(sample = basename(filepath) %>% str_replace('_profile.txt', ""),
-           Abundance = round(as.numeric(Abundance)*scale_reads),0)
+    ) %>%
+    dplyr::mutate(
+      sample = basename(filepath) %>% 
+        str_replace('_profile.txt', "") %>%  # for metaphlan
+        str_replace('_bracken_S.MPA.TXT', ""), # for kraken
+      Abundance = as.numeric(Abundance))
 }
 
 parse_MPA <- function(MPA_files, # path with wildcard to point to all files
                       column_names = default_colnames,
-                      convert_to_counts = FALSE,
-                      mOTUs_data = FALSE){
+                      mOTUs_data = FALSE, MPA_data = FALSE){
+  
   Sys.glob(MPA_files) %>%
-    map(read_filename, column_names, convert_to_counts) %>%
+    map(read_filename, column_names) %>%
     list_rbind() %>%
     tibble() %>%  # Keep only lines with species, remove duplicates at strain (or SGB) level
     dplyr::filter(str_detect(Taxonomy, "s__") & # but drop the SGB identifiers:
                     !str_detect(Taxonomy,"t__")) %>% # So far I think SGBs identifiers are as distinct as Species identifiers...
     { # mOTUs has multiple mOTUs per "Species" id because unknown Species are called incertae sedis
-      if (mOTUs_data) { # So we add the mOTU identifier, which represents a distinc species
+      if (mOTUs_data) { # So we add the mOTU identifier, which represents a distinct species
         mutate(., Taxonomy = paste(Taxonomy, mOTU))
       } else { . }
-      } %>%
+    } %>%
+    { # Currently metaphlan relative abundances do not sum at 100 at the species level,
+      # this is a known issue https://forum.biobakery.org/t/metaphlan-genus-level-relative-abundance-not-summing-up-to-100-and-possible-database-problem/5630/6
+      # So for now we normalise them manually:
+      if (MPA_data) {
+        mutate(., Abundance = 100*Abundance/sum(Abundance))
+      } else { . }
+    } %>% 
     dplyr::select(sample, Taxonomy, Abundance) %>%
-    dplyr::mutate(Abundance = as.double(Abundance)) %>%
     group_by(Taxonomy, sample) %>% # Compute abundance by Species
     dplyr::summarise(Abundance = sum(Abundance), .groups='drop') %>% # sum strains into species if applicable
     tidyr::pivot_wider(names_from = sample, values_from = Abundance, values_fill = 0) %>%
@@ -123,7 +125,7 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
       Genus = str_extract(Taxonomy, "g__[^|]+") %>% str_remove("g__"),
       Species = str_extract(Taxonomy, "s__[^|]+") %>% str_remove("s__")) %>%
     dplyr::select(-Taxonomy)
-  }
+}
 
 ###############################################
 ### Build phyloseq object from MPA output ####
@@ -131,18 +133,18 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
 
 # Filtering low prevalence taxa
 filter_low_prevalence <- function(ps, minPrev = 0.05, minAbund = 0.0001) {
-
+  
   if(taxa_are_rows(ps)) {Margin <- c(1,2)} else {Margin <- c(2,1) }
-
+  
   # Taxa prevalence
   prev <- apply(otu_table(ps), Margin[1], function(x) sum(x > 0)) / nsamples(ps)
-
+  
   # Convert to relative abundance
   rel_abund <- apply(otu_table(ps), Margin[2], function(x) x / sum(x))
-
+  
   # Keep taxa with prevalence above threshold
   keepTaxa <- names(prev[prev >= minPrev & apply(rel_abund, 1, max) >= minAbund])
-
+  
   # Subset phyloseq object
   prune_taxa(keepTaxa, ps) %>% return
 }

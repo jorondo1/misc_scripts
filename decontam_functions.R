@@ -7,7 +7,7 @@ decontaminate <- function(seqtab, samdata, var, p = 0.1) {
   require(decontam)
   
   idx <- which(samdata[,var] >0)
-  conc <- samdata[idx, var]
+  conc <- as.matrix(samdata[idx, var])
   asv <- seqtab[idx,]
   
   out <- list()
