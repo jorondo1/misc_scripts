@@ -92,7 +92,8 @@ read_filename <- function(filepath, column_names = default_colnames) {
 
 parse_MPA <- function(MPA_files, # path with wildcard to point to all files
                       column_names = default_colnames,
-                      mOTUs_data = FALSE, MPA_data = FALSE){
+                      mOTUs_data = FALSE, 
+                      MPA_data = FALSE){
   
   Sys.glob(MPA_files) %>%
     map(read_filename, column_names) %>%
