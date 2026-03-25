@@ -100,15 +100,15 @@ parse_MPA <- function(MPA_files, # path with wildcard to point to all files
     list_rbind() %>%
     tibble() %>%  # Keep only lines with species, remove duplicates at strain (or SGB) level
     dplyr::filter(str_detect(Taxonomy, "s__") & # but drop the SGB identifiers:
-                    !str_detect(Taxonomy,"t__")) %>% # So far I think SGBs identifiers are as distinct as Species identifiers...
+                    !str_detect(Taxonomy,"t__") & # So far I think SGBs identifiers are as distinct as Species identifiers...
+                    !str_detect(Taxonomy, "UNCLASSIFIED")) %>% 
     { # mOTUs has multiple mOTUs per "Species" id because unknown Species are called incertae sedis
       if (mOTUs_data) { # So we add the mOTU identifier, which represents a distinct species
         mutate(., Taxonomy = paste(Taxonomy, mOTU))
       } else { . }
     } %>%
-    { # Currently metaphlan relative abundances do not sum at 100 at the species level,
-      # this is a known issue https://forum.biobakery.org/t/metaphlan-genus-level-relative-abundance-not-summing-up-to-100-and-possible-database-problem/5630/6
-      # So for now we normalise them manually:
+    { # metaphlan outputs unclassified abundances, so the classified proportion does not sum to 100
+      # normalise manually:
       if (MPA_data) {
         mutate(., Abundance = 100*Abundance/sum(Abundance))
       } else { . }
