@@ -6,14 +6,14 @@ To work on ip34, you need a [Digital Research Alliance of Canada](https://ccdb.a
 ## 1. Initial setup (locally)
 This will periodically send a signal to ip34 to make sure you don't spontaneously get logged out. _You only need to do this once._
 
-### On a Mac 
+### --> On a Mac 
 Open the Terminal app and run the following: 
 
 	touch ~/.ssh/config
 	echo "Host *" >>  ~/.ssh/config 
 	echo ServerAliveInterval 60 >> ~/.ssh/config 
 
-### On Windows
+### --> On Windows
 1. Navigate to your home folder, typically under `C:\Users:\<username>\.ssh`
 2. Open the config file; if there is none, right-click inside the .ssh folder and select New > Text Document
 3. Add the following lines to the file :
