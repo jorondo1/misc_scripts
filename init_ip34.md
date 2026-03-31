@@ -31,12 +31,11 @@ Whenever you want to access ip34, run this command with your DRAC username (will
 	ssh username@ip34.ccs.usherbrooke.ca
  
 Once you are logged in, 
-[!NOTE]
 > *YOU MUST* run the following command, *EACH AND EVERY TIME* you log in.
 
 	newgrp def-ilafores
 	
-Otherwise, any file you create will only be readable and writable by you. *Do not add the newgrp command to your bashrc, tempting as it may be*
+Otherwise, any file you create will only be readable and writable by you. *Do not add the newgrp command to your bashrc, tempting as it may be.*
 
 ## 3. Initial setup (ip34)
 _You'll only need to do this once, ever._ It will add a few lines to your `.bashrc` file, which is executed every time you login. _Warning_ : each command with `>>` will append something to the .bashrc file. If you do them multiple times, you'll be adding multiple lines to it. 
