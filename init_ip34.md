@@ -30,7 +30,9 @@ Whenever you want to access ip34, run this command with your DRAC username (will
 
 	ssh username@ip34.ccs.usherbrooke.ca
  
-Once you are logged in, *YOU MUST* run the following command, *EACH AND EVERY TIME* you log in.
+Once you are logged in, 
+[!NOTE]
+> *YOU MUST* run the following command, *EACH AND EVERY TIME* you log in.
 
 	newgrp def-ilafores
 	
