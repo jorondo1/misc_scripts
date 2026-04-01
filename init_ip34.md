@@ -68,7 +68,7 @@ ________________________________________________________________________________
 __________|_______________________________|_________|_________|_________________
 
 ```
-At this point, *YOU MUST* run the following command, *EACH AND EVERY TIME* you log in.
+At this point, *YOU MUST* execute the following command, *EACH AND EVERY TIME* you log in.
 
 	newgrp def-ilafores
 	
