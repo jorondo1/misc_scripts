@@ -1,7 +1,7 @@
 A quick guide to access ip34 (aka Mammouth) ! Steps 0, 1 and 3 only need to be done once. If you need a quick primer on the bash language syntax, which is the language the code blocks below are written in, checkout Mike Lee's [awesome tutorial](https://astrobiomike.github.io/unix/unix-intro). 
 
 ## 0. Create a DRAC account
-To work on ip34, you need a [Digital Research Alliance of Canada](https://ccdb.alliancecan.ca/security/login) account. Ask your director for their sponsorship code.
+To work on ip34, you need a [Digital Research Alliance of Canada](https://ccdb.alliancecan.ca/security/login) account. Ask your director for their sponsorship code. For help, visit their [FAQ](https://docs.alliancecan.ca/wiki/Frequently_Asked_Questions_about_the_CCDB/fr).
 
 ## 1. Initial setup (locally)
 This will periodically send a signal to ip34 to make sure you don't spontaneously get logged out. _You only need to do this once._
