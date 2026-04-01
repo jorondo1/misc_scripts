@@ -79,7 +79,7 @@ _You'll only need to do this once, ever._ It will add a few lines to your `.bash
 
 	echo umask 007 >> ~/.bashrc	# Sets up certain permissions
 	echo export MUGQIC_INSTALL_HOME=/cvmfs/soft.mugqic/CentOS6 >> ~/.bashrc # Allows access to certain programs (e.g. cutadapt)
-	echo module use $MUGQIC_INSTALL_HOME/modulefiles  >> ~/.bashrc			
+	echo 'module use $MUGQIC_INSTALL_HOME/modulefiles'  >> ~/.bashrc			
 	echo export ILAFORES=/jbod2/def-ilafores >> ~/.bashrc # Creates a $ILAFORES variable
 	. ~/.bashrc # This simply executes the contents of the .bashrc file	# Executes the .bashrc (happens every time you log in, but we need those variables now!)
 	
