@@ -6,14 +6,14 @@ To work on ip34, you need a [Digital Research Alliance of Canada](https://ccdb.a
 ## 1. Initial setup (locally)
 This will periodically send a signal to ip34 to make sure you don't spontaneously get logged out. _You only need to do this once._
 
-### --> On a Mac 
+### 1.1.A. --> On a Mac 
 Open the Terminal app and run the following: 
 
 	touch ~/.ssh/config
 	echo "Host *" >>  ~/.ssh/config 
 	echo ServerAliveInterval 60 >> ~/.ssh/config 
 
-### --> On Windows
+### 1.1.B. --> On Windows
 1. Navigate to your home folder, typically under `C:\Users:\<username>\.ssh`
 2. Open the config file; if there is none, right-click inside the .ssh folder and select New > Text Document
 3. Add the following lines to the file :
@@ -25,11 +25,24 @@ Host remote_server_ip
 Save it and quit. 
 Then, open the PowerShell app and proceed with the next steps.
 
+### 1.2. Setting up DUO 2FA
+
+All alliance supercomputers require 2-factor authentification using the DUO app. Follow [these steps](https://docs.alliancecan.ca/wiki/Multifactor_authentication#Registering_factors) to set it up.
+
 ## 2. Logging on to ip34 (might want to write these somewhere)
 Whenever you want to access ip34, run this command with your DRAC username (will prompt for password; nothing shows when you'll write your password, that's normal!). Here, use the username to your DRAC account (not your email), for example :
 
 	ssh username@ip34.ccs.usherbrooke.ca
  
+You will be prompted with 2FA, which will look like:
+
+```
+Enter a passcode or select one of the following options:
+1. Duo Push to Pixel8 (Android)
+Passcode or option (1-1):
+```
+Type 1, press return, and you will receive a notification to approve. 
+
 Once you are logged in, 
 > *YOU MUST* run the following command, *EACH AND EVERY TIME* you log in.
 
