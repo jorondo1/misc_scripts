@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Jonathan Rondeau-Leclaire" />
+<meta name="author" content="Laforest-Lapointe Lab" />
 
 <meta name="date" content="2026-04-01" />
 
@@ -1823,7 +1823,7 @@ font-size: 0.95em;
 
 
 <h1 class="title toc-ignore">Getting started on ip34 (Mammouth)</h1>
-<h4 class="author">Jonathan Rondeau-Leclaire</h4>
+<h4 class="author">Laforest-Lapointe Lab</h4>
 <h4 class="date">2026-04-01</h4>
 
 </div>
@@ -1835,9 +1835,10 @@ font-size: 0.95em;
 </script>
 <div class="callout-note">
 <p><strong>About this guide</strong><br />
-A quick guide to access ip34 (aka Mammouth). Steps 0, 1, and 3 only need
-to be done once. If you need a primer on bash (the language used in code
-blocks below), check out Mike Lee’s <a href="https://astrobiomike.github.io/unix/unix-intro">awesome
+A quick guide to access ip34 (aka Mammouth)! Steps 0, 1 and 3 only need
+to be done once. If you need a quick primer on the bash language syntax,
+which is the language the code blocks below are written in, checkout
+Mike Lee’s <a href="https://astrobiomike.github.io/unix/unix-intro">awesome
 tutorial</a>.</p>
 </div>
 <hr />
@@ -1849,42 +1850,41 @@ Alliance of Canada</a> account. Ask your director for their sponsorship
 code. For help, visit their <a href="https://docs.alliancecan.ca/wiki/Frequently_Asked_Questions_about_the_CCDB/fr">FAQ</a>.</p>
 <hr />
 </div>
-<div id="initial-setup-local" class="section level1 tabset" number="2">
+<div id="initial-setup-locally" class="section level1 tabset" number="2">
 <h1 class="tabset"><span class="header-section-number">2</span> Initial
-setup (local)</h1>
+setup (locally)</h1>
 <p>This will periodically send a signal to ip34 to make sure you don’t
 spontaneously get logged out. <em>You only need to do this
 once.</em></p>
-<div id="mac" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Mac</h2>
+<div id="on-a-mac" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> On a Mac</h2>
 <p>Open the Terminal app and run the following:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">touch</span> ~/.ssh/config</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Host *&quot;</span> <span class="op">&gt;&gt;</span> ~/.ssh/config</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="bu">echo</span> ServerAliveInterval 60 <span class="op">&gt;&gt;</span> ~/.ssh/config</span></code></pre></div>
 </div>
-<div id="windows" class="section level2" number="2.2">
-<h2><span class="header-section-number">2.2</span> Windows</h2>
+<div id="on-windows" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> On Windows</h2>
 <ol style="list-style-type: decimal">
 <li>Navigate to your home folder, typically under
-<code>C:\Users\&lt;username&gt;\.ssh</code></li>
-<li>Open the <code>config</code> file; if there is none, right-click
-inside the <code>.ssh</code> folder and select <strong>New &gt; Text
-Document</strong></li>
+<code>C:\Users:\&lt;username&gt;\.ssh</code></li>
+<li>Open the config file; if there is none, right-click inside the .ssh
+folder and select New &gt; Text Document</li>
 <li>Add the following lines to the file:</li>
 </ol>
 <pre><code>Host ip34.ccs.usherbrooke.ca
     ServerAliveInterval 60</code></pre>
-<p>Save it and quit. Then open the <strong>PowerShell</strong> app and
-proceed with the next steps.</p>
+<p>Save it and quit. Then, open the PowerShell app and proceed with the
+next steps.</p>
 </div>
 </div>
 <div id="section" class="section level1 unnumbered">
 <h1 class="unnumbered"></h1>
-<div id="setting-up-duo-2fa" class="section level2" number="2.3">
-<h2><span class="header-section-number">2.3</span> Setting up DUO
-2FA</h2>
-<p>All Alliance supercomputers require 2-factor authentication using the
-DUO app. Follow <a href="https://docs.alliancecan.ca/wiki/Multifactor_authentication#Registering_factors">these
+<div id="setting-up-duo-2fa" class="section level3" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> Setting up DUO
+2FA</h3>
+<p>All alliance supercomputers require 2-factor authentification using
+the DUO app. Follow <a href="https://docs.alliancecan.ca/wiki/Multifactor_authentication#Registering_factors">these
 steps</a> to set it up.</p>
 <hr />
 </div>
@@ -1892,133 +1892,165 @@ steps</a> to set it up.</p>
 <div id="logging-on-to-ip34" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Logging on to ip34</h1>
 <p>Whenever you want to access ip34, run this command with your DRAC
-username (you will be prompted for your password; nothing shows when you
-type it — that’s normal!):</p>
+username (will prompt for password; nothing shows when you’ll write your
+password, that’s normal!). Here, use the username to your DRAC account
+(not your email), for example:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">ssh</span> username@ip34.ccs.usherbrooke.ca</span></code></pre></div>
-<p>You will then be prompted for 2FA, which will look like this:</p>
+<p>You will be prompted with 2FA, which will look like:</p>
 <pre><code>Enter a passcode or select one of the following options:
 1. Duo Push to Pixel8 (Android)
 Passcode or option (1-1):</code></pre>
-<p>Type <code>1</code>, press return, and approve the notification on
-your phone.</p>
-<p>Once logged in, you will see a welcome banner showing the available
-node types and resource limits.</p>
+<p>Type 1, press return, and you will receive a notification to
+approve.</p>
+<p>Once you are logged in, you’ll see something that looks like
+this:</p>
+<pre><code>################################################################################
+ __  __      ____  _     
+|  \/  |_ __|___ \| |__   Bienvenue sur Mammouth-Mp2b / Welcome to Mammoth-Mp2b
+| |\/| | &#39;_ \ __) | &#39;_ \ 
+| |  | | |_) / __/| |_) | Aide/Support:    mammouth@calculcanada.ca
+|_|  |_| .__/_____|_.__/  Globus endpoint: computecanada#mammouth
+       |_|                Documentation:   docs.calculcanada.ca
+                                           docs.calculcanada.ca/wiki/Mp2
+
+Grappe avec le meme environnement d&#39;utilisation que Cedar et Graham (Slurm scheduler).
+Cluster with the same user environment as Cedar and Graham (Slurm scheduler).
+
+________________________________________________________________________________
+          |                               |   Slurm |   Slurm |   Slurm
+ Mp2b     | Memory/Cores              | --nodes | --mem   | --cpus-per-task
+ nodetype |                               |   max   |   max   |   max
+----------+-------------------------------+---------+---------+-----------------
+ base     |  31 GB memory, 24 cores/node  |   1588  |   31G   |   24  
+ large    | 251 GB memory, 48 cores/node  |     20  |  251G   |   48
+ xlarge   | 503 GB memory, 48 cores/node  |      2  |  503G   |   48
+__________|_______________________________|_________|_________|_________________</code></pre>
 <div class="callout-danger">
-<p><strong>⚠️ Run this every single time you log in:</strong></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">newgrp</span> def-ilafores</span></code></pre></div>
-<p>Without this, any file you create will only be readable and writable
-by you — nobody else in the group will be able to access it. <strong>Do
-not add this to your <code>.bashrc</code></strong>, tempting as it may
-be; it must be run interactively each session.</p>
+<p>At this point, <strong>YOU MUST</strong> execute the following
+command, <strong>EACH AND EVERY TIME</strong> you log in.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">newgrp</span> def-ilafores</span></code></pre></div>
+<p>Otherwise, any file you create will only be readable and writable by
+you. <strong>Do not add the newgrp command to your bashrc, tempting as
+it may be.</strong></p>
 </div>
 <hr />
 </div>
 <div id="initial-setup-ip34" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Initial setup
 (ip34)</h1>
-<p><em>You’ll only need to do this once, ever.</em> The following
-commands append a few lines to your <code>.bashrc</code> file, which is
-executed every time you log in.</p>
+<p><em>You’ll only need to do this once, ever.</em> It will add a few
+lines to your <code>.bashrc</code> file, which is executed every time
+you login.</p>
 <div class="callout-warning">
-<p>Each command using <code>&gt;&gt;</code> <strong>appends</strong> to
-<code>.bashrc</code>. If you run them multiple times, you will end up
-with duplicate lines. Run each command only once.</p>
+<p>Each command with <code>&gt;&gt;</code> will append something to the
+<code>.bashrc</code> file. If you do them multiple times, you’ll be
+adding multiple lines to it.</p>
 </div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="bu">echo</span> umask 007 <span class="op">&gt;&gt;</span> ~/.bashrc                                                          <span class="co"># Sets up group permissions</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="bu">echo</span> export MUGQIC_INSTALL_HOME=/cvmfs/soft.mugqic/CentOS6 <span class="op">&gt;&gt;</span> ~/.bashrc             <span class="co"># Access to shared programs (e.g. cutadapt)</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;module use $MUGQIC_INSTALL_HOME/modulefiles&#39;</span> <span class="op">&gt;&gt;</span> ~/.bashrc</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="bu">echo</span> export ILAFORES=/jbod2/def-ilafores <span class="op">&gt;&gt;</span> ~/.bashrc                               <span class="co"># Shortcut variable to the group directory</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="bu">.</span> ~/.bashrc                                                                          <span class="co"># Apply changes immediately</span></span></code></pre></div>
-<p>This setup will:</p>
-<ul>
-<li>Allow group members (<code>def-ilafores</code>) to read and execute
-files you create</li>
-<li>Give you access to shared software via the MUGQIC module system</li>
-<li>Create a <code>$ILAFORES</code> variable pointing to the group
-directory</li>
-</ul>
-<div id="setting-up-a-project-directory" class="section level2" number="4.1">
-<h2><span class="header-section-number">4.1</span> Setting up a project
-directory</h2>
-<p>It is best practice to work from a subdirectory under
-<code>$ILAFORES/analysis/</code>. The snippet below creates your project
-directory and adds a persistent variable for it in your
-<code>.bashrc</code>. Replace <code>your_project_name</code> with your
-actual project name, and <code>PROJECT1</code> with a short memorable
-name of your choice.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;export PROJECT1=</span><span class="va">$ILAFORES</span><span class="st">/analysis/your_project_name&quot;</span> <span class="op">&gt;&gt;</span> ~/.bashrc</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="bu">.</span> ~/.bashrc</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$PROJECT1</span></span></code></pre></div>
-<div class="callout-note">
-<p>These last commands only need to be done once per project. From then
-on, whenever you log in to ip34, all you need is:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">newgrp</span> def-ilafores  <span class="co"># don&#39;t forget! ;-)</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$PROJECT1</span></span></code></pre></div>
-</div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="bu">echo</span> umask 007 <span class="op">&gt;&gt;</span> ~/.bashrc                                                        <span class="co"># Sets up certain permissions</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="bu">echo</span> export MUGQIC_INSTALL_HOME=/cvmfs/soft.mugqic/CentOS6 <span class="op">&gt;&gt;</span> ~/.bashrc           <span class="co"># Allows access to certain programs (e.g. cutadapt)</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;module use $MUGQIC_INSTALL_HOME/modulefiles&#39;</span>  <span class="op">&gt;&gt;</span> ~/.bashrc            </span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="bu">echo</span> export ILAFORES=/jbod2/def-ilafores <span class="op">&gt;&gt;</span> ~/.bashrc                              <span class="co"># Creates a $ILAFORES variable</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="bu">.</span> ~/.bashrc                                                                        <span class="co"># Executes the .bashrc (happens every time you log in, but we need those variables now!)</span></span></code></pre></div>
+<p>This setup will allow others within your group (def-ilafores) to
+write/execute files you’ve created, allow you to access certain programs
+on mugqic, and finally will create a simple variable you can use to
+navigate to the def-ilafores directory, which is where you should
+generally work from. To get there and, for example, create a new project
+(under the analysis folder would be the best place), I suggest adding
+another variable to your <code>.bashrc</code> that will let you use the
+path to your project directory without having to type it in its entirety
+every time.</p>
+<p>In the following, replace <code>your_project_name</code> with the
+name you want your project directory to have, and <code>PROJECT1</code>
+by a short name you’ll remember (it will create a variable pointing to
+your project directory path, which you can use in place of the path when
+using the command line).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;export PROJECT1=</span><span class="va">$ILAFORES</span><span class="st">/analysis/your_project_name&quot;</span> <span class="op">&gt;&gt;</span> ~/.bashrc   <span class="co"># Makes sure the variable exists whenever you log in</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="bu">.</span> ~/.bashrc                                                                 <span class="co"># execute the bashrc</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="va">$PROJECT1</span>                                                          <span class="co"># create your project directory</span></span></code></pre></div>
+<p>Again, these last two commands only need to be done once (per
+project). Then, whenever you log in to ip34, using the project directory
+variable name you’ve chosen (here PROJECT1), all you have to do is</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">newgrp</span> def-ilafores  <span class="co"># don&#39;t forget! ;-)</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$PROJECT1</span></span></code></pre></div>
+<p>And you can start doing science!</p>
 <hr />
-</div>
 </div>
 <div id="going-further" class="section level1 tabset" number="5">
 <h1 class="tabset"><span class="header-section-number">5</span> Going
 further</h1>
-<div id="loading-r" class="section level2" number="5.1">
-<h2><span class="header-section-number">5.1</span> Loading R</h2>
-<p>If you need extra computing power to run a DADA2 pipeline your laptop
-can’t handle, you can load an R environment directly on ip34. First,
-make sure your <code>.bashrc</code> points to the shared R library:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="bu">echo</span> export R_LIBS=<span class="st">&quot;/home/def-ilafores&quot;</span> <span class="op">&gt;&gt;</span> ~/.bashrc</span></code></pre></div>
-<p>Then load the required modules and start R:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">module</span> load StdEnv/2023 r/4.4.0 mugqic/cutadapt/2.10</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">nice</span> R</span></code></pre></div>
+<div id="loading-the-r-environment" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Loading the R
+environment</h2>
+<p>If you need extra juice to run a massive DADA2 pipeline your laptop
+can’t handle, for example, you can load the R environment within ip34.
+First, on ip34, use shared R libraries from the Laforest group:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="bu">echo</span> export R_LIBS=<span class="st">&quot;/home/def-ilafores&quot;</span> <span class="op">&gt;&gt;</span> ~/.bashrc</span></code></pre></div>
+<p>Then, load R and activate it.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">module</span> load StdEnv/2023 r/4.4.0 mugqic/cutadapt/2.10</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">nice</span> R</span></code></pre></div>
 <div class="callout-ip34">
-<p>Using <code>nice</code> distributes core usage equitably among users.
-Once you run this, you are in an R console — the <code>&gt;</code>
-prompt now expects R commands, not bash. You will need to install your
-packages (only once), just as you did on your own computer.</p>
+<p><code>nice</code> is optional, but recommended so your program is
+“nice to others” who use the same resources (so you don’t hoard all the
+cores in ip34). Once you run this, you are now in the equivalent of an R
+console, which accepts R commands (don’t write in bash!). The
+<code>&gt;</code> at the beginning of a new line expects commands in the
+R language. You’ll need to install the packages you need (only once), as
+you once did on your computer. By default, your current directory will
+be the one you were in when you activated R.</p>
 </div>
 </div>
-<div id="multithreading" class="section level2" number="5.2">
-<h2><span class="header-section-number">5.2</span> Multithreading</h2>
-<p>ip34 has 96 cores available. Whenever a function has a
-<code>threads</code>, <code>cores</code>, or <code>multithread</code>
-argument, you can take advantage of this.</p>
+<div id="multithread-support-of-ip34" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Multithread support
+of ip34</h2>
+<p>The cool thing about ip34 is that there are 96 cores available. So
+whenever the function you run has a <code>threads</code> or
+<code>cores</code> argument or something like that, you can choose how
+many to use.</p>
 <div class="callout-warning">
-<p><strong>You are not alone on ip34!</strong> It is generally frowned
-upon to use all available cores. Try to limit yourself to 24 for most
-purposes. If you need more, the cluster has 1,500 compute nodes
-accessible via the Slurm scheduler — but that requires a bit more
-scripting.</p>
+<p>Keep in mind that you are not alone on ip34! It is generally frowned
+upon to huddle all the cores. Try to limit yourself to 24 for most
+purposes. If you need more, there are 1500 computing nodes that can be
+used, but this requires a little extra legwork in terms of scripting
+(but you’re having fun so that shouldn’t be an issue!).</p>
 </div>
 </div>
-<div id="background-jobs-with-tmux" class="section level2" number="5.3">
-<h2><span class="header-section-number">5.3</span> Background jobs with
-tmux</h2>
-<p>Imagine running DADA2 sample inference on hundreds of samples — that
-might take hours! Rather than leaving your laptop running, use
-<code>tmux</code> directly on ip34. It creates a virtual shell that
-keeps running even after you close your session.</p>
-<p>To start a new tmux session:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">tmux</span> new <span class="at">-s</span> your_session_name</span></code></pre></div>
-<p>A green bar will appear at the bottom — you are now inside a tmux
-session. Run your code as usual. When you want to leave without stopping
-it, detach with <code>Ctrl+B</code>, then <code>D</code>. Back on your
-regular shell, you can check open sessions:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">tmux</span> ls</span></code></pre></div>
-<p>And reattach to one by name:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">tmux</span> attach <span class="at">-t</span> your_session_name</span></code></pre></div>
+<div id="making-stuff-run-in-the-background" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Making stuff run in
+the background</h2>
+<p>Imagine you want to run DADA2’s sample inference on hundreds of
+samples… that might take a while! If you want to go home and let it run
+while you binge-watch Friends, you can either let your laptop running
+(not recommended), or use a cool little tool called <code>tmux</code>
+directly on ip34. Essentially, tmux creates a virtual shell that runs in
+the background. If you close your ip34 session (or just log out), it
+keeps running. Within that tmux shell, you can run anything like you
+would on your normal shell. To get it running, log in to ip34, get where
+you need to be, then run:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">tmux</span> new <span class="at">-s</span> your_session_name</span></code></pre></div>
+<p>The text will disappear on your shell and a green line will appear at
+the bottom. That’s it, you are in a tmux session! You can do anything
+you would normally have, like load your R environment and execute some
+commands. Once your code is running, you can log out by using the
+shortcut <code>Ctrl+B</code> on your keyboard, then pressing
+<code>D</code>. <code>Ctrl+B</code> lets you send one command to control
+tmux from within a tmux session, and here we use <code>D</code>, which
+means to Detach from the tmux session. You’ll be back to where you were
+before creating the tmux session. You can check open sessions by
+doing</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">tmux</span> ls</span></code></pre></div>
+<p>You can reattach to a session using its name:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="ex">tmux</span> attach <span class="at">-t</span> your_session_name</span></code></pre></div>
+<p>And you’ll see your code is still running.</p>
 <div class="callout-note">
-<p>To learn more about tmux (including how to view multiple sessions
-simultaneously), see <a href="https://www.redhat.com/en/blog/introduction-tmux-linux">this
-introduction</a>.</p>
+<p>To learn more about tmux (like how to see multiple sessions
+simultaneously), check out <a href="https://www.redhat.com/en/blog/introduction-tmux-linux">this blog
+post</a>.</p>
 </div>
 </div>
 </div>
 <div id="section-1" class="section level1 unnumbered">
 <h1 class="unnumbered"></h1>
-<hr />
-<p><em>For questions or issues with ip34, contact <a href="mailto:mammouth@calculcanada.ca">mammouth@calculcanada.ca</a> or
-refer to the <a href="https://docs.alliancecan.ca/wiki/Mp2">Alliance
-documentation</a>.</em></p>
 </div>
 
 
