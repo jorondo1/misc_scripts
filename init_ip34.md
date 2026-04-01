@@ -43,8 +43,32 @@ Passcode or option (1-1):
 ```
 Type 1, press return, and you will receive a notification to approve. 
 
-Once you are logged in, 
-> *YOU MUST* run the following command, *EACH AND EVERY TIME* you log in.
+Once you are logged in, you'll see something that looks like this:
+```
+################################################################################
+ __  __      ____  _     
+|  \/  |_ __|___ \| |__   Bienvenue sur Mammouth-Mp2b / Welcome to Mammoth-Mp2b
+| |\/| | '_ \ __) | '_ \ 
+| |  | | |_) / __/| |_) | Aide/Support:    mammouth@calculcanada.ca
+|_|  |_| .__/_____|_.__/  Globus endpoint: computecanada#mammouth
+       |_|                Documentation:   docs.calculcanada.ca
+                                           docs.calculcanada.ca/wiki/Mp2
+
+Grappe avec le meme environnement d'utilisation que Cedar et Graham (Slurm scheduler).
+Cluster with the same user environment as Cedar and Graham (Slurm scheduler).
+
+________________________________________________________________________________
+          |                               |   Slurm |   Slurm |   Slurm
+ Mp2b 	  | Memory/Cores 	          | --nodes | --mem   | --cpus-per-task
+ nodetype |                               |   max   |   max   |   max
+----------+-------------------------------+---------+---------+-----------------
+ base     |  31 GB memory, 24 cores/node  |   1588  |   31G   |   24  
+ large    | 251 GB memory, 48 cores/node  |     20  |  251G   |   48
+ xlarge   | 503 GB memory, 48 cores/node  |      2  |  503G   |   48
+__________|_______________________________|_________|_________|_________________
+
+```
+At this point, *YOU MUST* run the following command, *EACH AND EVERY TIME* you log in.
 
 	newgrp def-ilafores
 	
